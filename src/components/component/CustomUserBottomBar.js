@@ -54,12 +54,14 @@ const CustomUserBottomBar = () => {
             />
             <BarItem
                 itemText="Hesabım"
-                itemLink="MyAccountPage"
+                itemLink="LoginPage"
                 itemIcon={faUser}
                 iconSize={25}
                 iconColor="black"
-                isActive={currentRouteName === 'MyAccountPage'}
+                isActive={currentRouteName === 'LoginPage'}
             />
+
+
 
 
         </View>
