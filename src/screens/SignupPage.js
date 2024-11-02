@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert, StyleSheet, ImageBackground } from 'react-native';
 import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Token kaydetmek için AsyncStorage
 //import { login } from '../redux/UserSlice';
-import { useDispatch } from 'react-redux';
+//import { useDispatch } from 'react-redux';
 
 const SignupPage = ({ navigation }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [username, setUsername] = useState('');
+    const [displayName, setDisplayname] = useState('');
     //const dispatch = useDispatch();
 
     const handleSignup = async () => {
-        if (!email || !password || !username) {
+        if (!email || !password || !displayName) {
             Alert.alert("Hata", "Lütfen tüm alanları doldurun.");
             return;
         }
@@ -21,26 +21,28 @@ const SignupPage = ({ navigation }) => {
             let formData = new FormData();
             formData.append('email', email);
             formData.append('password', password);
-            formData.append('username', username);
-            
-            // const response = await axios.post('http://192.168.1.105:8000/signup.php', formData, {
-            //     headers: {
-            //         'Content-Type': 'multipart/form-data',
-            //     },
-            // });
+            formData.append('displayname', displayName);
+
+            const response = await axios.post('https://roomiefies.com/app/register.php', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
             console.log(response.data);
             if (response.data.sonuc === '0') {
                 Alert.alert('Hata', response.data.mesaj, [{ text: 'Tamam' }]);
             } else {
-                const token = response.data.token;
+                // Başarılı ise token'ı al ve kaydet
 
+                const token = response.data.token;
+                // Token'ı AsyncStorage'a kaydet
                 await AsyncStorage.setItem('token', token);
                 await AsyncStorage.setItem('email', email);
-                await AsyncStorage.setItem('username', response.data.username);
+                await AsyncStorage.setItem('displayName', response.data.displayname);
 
                 setEmail('');
                 setPassword('');
-                setUsername('');
+                setDisplayname('');
                 //dispatch(login(token));
             }
 
@@ -51,49 +53,49 @@ const SignupPage = ({ navigation }) => {
     };
 
     return (
-        <ImageBackground 
-        source={require('../../assets/images/backgroundlogin.png')}
-        style={styles.backgroundImage}
-      >
-        <View style={styles.container}>
-            <Text style={styles.label}>Kullanıcı Adı</Text>
-            <TextInput
-                value={username}
-                onChangeText={setUsername}
-                placeholder="Kullanıcı Adı"
-                placeholderTextColor="#888"
-                style={styles.input}
-            />
-            <Text style={styles.label}>Email</Text>
-            <TextInput
-                value={email}
-                onChangeText={setEmail}
-                placeholder="Email"
-                keyboardType="email-address"
-                placeholderTextColor="#888"
-                style={styles.input}
-            />
-            <Text style={styles.label}>Şifre</Text>
-            <TextInput
-                value={password}
-                onChangeText={setPassword}
-                placeholder="Şifre"
-                secureTextEntry
-                placeholderTextColor="#888"
-                style={styles.input}
-            />
-            <TouchableOpacity style={styles.button} onPress={handleSignup}>
-                <Text style={styles.buttonText}>Kayıt Ol</Text>
-            </TouchableOpacity>
+        <ImageBackground
+            source={require('../../assets/images/backgroundlogin.png')}
+            style={styles.backgroundImage}
+        >
+            <View style={styles.container}>
+                <Text style={styles.label}>Kullanıcı Adı</Text>
+                <TextInput
+                    value={displayName}
+                    onChangeText={setDisplayname}
+                    placeholder="Kullanıcı Adı"
+                    placeholderTextColor="#888"
+                    style={styles.input}
+                />
+                <Text style={styles.label}>Email</Text>
+                <TextInput
+                    value={email}
+                    onChangeText={setEmail}
+                    placeholder="Email"
+                    keyboardType="email-address"
+                    placeholderTextColor="#888"
+                    style={styles.input}
+                />
+                <Text style={styles.label}>Şifre</Text>
+                <TextInput
+                    value={password}
+                    onChangeText={setPassword}
+                    placeholder="Şifre"
+                    secureTextEntry
+                    placeholderTextColor="#888"
+                    style={styles.input}
+                />
+                <TouchableOpacity style={styles.button} onPress={handleSignup}>
+                    <Text style={styles.buttonText}>Kayıt Ol</Text>
+                </TouchableOpacity>
 
-            {/* Zaten üye misin? Giriş yap butonu */}
-            <TouchableOpacity 
-                style={styles.loginButton} 
-                onPress={() => navigation.navigate('LoginPage')} // LoginPage.js'e yönlendirme
-            >
-                <Text style={styles.loginText}>Zaten üye misin? Giriş yap!</Text>
-            </TouchableOpacity>
-        </View>
+                {/* Zaten üye misin? Giriş yap butonu */}
+                <TouchableOpacity
+                    style={styles.loginButton}
+                    onPress={() => navigation.navigate('LoginPage')} // LoginPage.js'e yönlendirme
+                >
+                    <Text style={styles.loginText}>Zaten üye misin? Giriş yap!</Text>
+                </TouchableOpacity>
+            </View>
         </ImageBackground>
     );
 };
