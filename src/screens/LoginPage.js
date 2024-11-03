@@ -21,11 +21,11 @@ export default function LoginPage({ navigation }) {
             formData.append('email', email);
             formData.append('password', password);
 
-            // const response = await axios.post('http://192.168.1.105:8000/login.php', formData, {
-            //   headers: {
-            //     'Content-Type': 'multipart/form-data',
-            //   },
-            // });
+            const response = await axios.post('https://roomiefies.com/app/login.php', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
 
             console.log(response.data);
 
@@ -37,10 +37,10 @@ export default function LoginPage({ navigation }) {
                 await AsyncStorage.setItem('email', email);
                 setEmail('');
                 setPassword('');
-                dispatch(login(token));
-                if (response.data.yetki == "helios") {
-                    dispatch(adminlogin(token));
-                }
+                // dispatch(login(token));
+                // if (response.data.yetki == "helios") {
+                //     dispatch(adminlogin(token));
+                // }
             }
 
         } catch (error) {

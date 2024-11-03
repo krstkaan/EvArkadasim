@@ -28,14 +28,14 @@ const SignupPage = ({ navigation }) => {
                     'Content-Type': 'multipart/form-data',
                 },
             });
-            console.log(response.data);
+
             if (response.data.sonuc === '0') {
                 Alert.alert('Hata', response.data.mesaj, [{ text: 'Tamam' }]);
-            } else {
+            } else if(response.data.sonuc === '1') {
                 // Başarılı ise token'ı al ve kaydet
-
+                console.log(response.data);
                 const token = response.data.token;
-                // Token'ı AsyncStorage'a kaydet
+
                 await AsyncStorage.setItem('token', token);
                 await AsyncStorage.setItem('email', email);
                 await AsyncStorage.setItem('displayName', response.data.displayname);
@@ -44,6 +44,8 @@ const SignupPage = ({ navigation }) => {
                 setPassword('');
                 setDisplayname('');
                 //dispatch(login(token));
+            }else{
+            console.log("else ici:" + response.data);
             }
 
         } catch (error) {
@@ -58,11 +60,11 @@ const SignupPage = ({ navigation }) => {
             style={styles.backgroundImage}
         >
             <View style={styles.container}>
-                <Text style={styles.label}>Kullanıcı Adı</Text>
+                <Text style={styles.label}>Ad Soyad</Text>
                 <TextInput
                     value={displayName}
                     onChangeText={setDisplayname}
-                    placeholder="Kullanıcı Adı"
+                    placeholder="John Doe"
                     placeholderTextColor="#888"
                     style={styles.input}
                 />
@@ -70,7 +72,7 @@ const SignupPage = ({ navigation }) => {
                 <TextInput
                     value={email}
                     onChangeText={setEmail}
-                    placeholder="Email"
+                    placeholder="johndoe@gmail.com"
                     keyboardType="email-address"
                     placeholderTextColor="#888"
                     style={styles.input}
