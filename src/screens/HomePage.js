@@ -4,7 +4,8 @@ import React from 'react'
 const HomePage = () => {
   return (
     <View style={styles.container}>
-      <Text>Home Page</Text>
+      <Text>Büşra Kocaman Was Here</Text>
+      <Text>We Could Be The Same</Text>
     </View>
 
   )
