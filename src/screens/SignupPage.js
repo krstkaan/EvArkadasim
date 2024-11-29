@@ -4,6 +4,7 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage'; // Token kaydetmek için AsyncStorage
 //import { login } from '../redux/UserSlice';
 //import { useDispatch } from 'react-redux';
+import styles from '../../assets/styles/style';
 
 const SignupPage = ({ navigation }) => {
     const [email, setEmail] = useState('');
@@ -95,70 +96,11 @@ const SignupPage = ({ navigation }) => {
                     style={styles.loginButton}
                     onPress={() => navigation.navigate('LoginPage')} // LoginPage.js'e yönlendirme
                 >
-                    <Text style={styles.loginText}>Zaten üye misin? Giriş yap!</Text>
+                    <Text style={styles.forwardText}>Zaten üye misin? Giriş yap!</Text>
                 </TouchableOpacity>
             </View>
         </ImageBackground>
     );
 };
-
-const styles = StyleSheet.create({
-    backgroundImage: {
-        flex: 1,
-        width: '100%',
-        height: '100%',
-        resizeMode: 'cover',
-    },
-    container: {
-        flex: 1,
-        padding: 30,
-        justifyContent: 'center',
-    },
-    label: {
-        fontSize: 18,
-        marginBottom: 10,
-        color: '#333',
-        fontWeight: '600',
-    },
-    input: {
-        borderWidth: 1,
-        borderColor: '#ccc',
-        borderRadius: 12,
-        padding: 12,
-        marginBottom: 20,
-        backgroundColor: '#fff',
-        fontSize: 16,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.2,
-        shadowRadius: 4,
-        elevation: 2,
-    },
-    button: {
-        backgroundColor: '#4e9c2e',
-        paddingVertical: 15,
-        borderRadius: 12,
-        alignItems: 'center',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.3,
-        shadowRadius: 4,
-        elevation: 4,
-    },
-    buttonText: {
-        color: '#fff',
-        fontSize: 20,
-        fontWeight: '700',
-    },
-    loginButton: {
-        marginTop: 20,
-        alignItems: 'center',
-    },
-    loginText: {
-        color: '#4e9c2e',
-        fontSize: 16,
-        fontWeight: '500',
-    },
-});
 
 export default SignupPage;
