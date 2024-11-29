@@ -1,22 +1,13 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import { StyleSheet, Text, View } from 'react-native';
+import React from 'react';
+import style from '../../assets/styles/style';
 
 const HomePage = () => {
   return (
-    <View style={styles.container}>
-      <Text>Büşra Kocaman Was Here</Text>
-      <Text>We Could Be The Same</Text>
+    <View style={style.container}>
+      <Text>Home Page</Text>
     </View>
+  );
+};
 
-  )
-}
-
-export default HomePage
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-})
+export default HomePage;
