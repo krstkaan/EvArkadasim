@@ -1,6 +1,7 @@
-import { StyleSheet, Text, View, ScrollView, Image, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, Image, TouchableOpacity, useEffect } from 'react-native';
 import React from 'react';
 import styles from '../../assets/styles/style';
+import CustomUserBottomBar from '../components/component/CustomUserBottomBar';
 
 const HomePage = () => {
   const data = [

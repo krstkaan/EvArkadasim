@@ -54,7 +54,7 @@ const CustomUserBottomBar = () => {
             />
             <BarItem
                 itemText="Hesabım"
-                itemLink="LoginPage"
+                itemLink="MyAccountPage"
                 itemIcon={faUser}
                 iconSize={25}
                 iconColor="black"

@@ -1,31 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react'
 import { NavigationContainer } from '@react-navigation/native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import AuthStack from './AuthStack';
+import AuthStack from "./AuthStack";
+import { useSelector } from 'react-redux';
+import CustomUserBottomBar from '../components/component/CustomUserBottomBar';
+import CustomGuestBottomBar from '../components/component/CustomGuestBottomBar';
 import AppStack from './AppStack';
-
 const RootNavigation = () => {
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const checkAuth = async () => {
-            const token = await AsyncStorage.getItem('token');
-            setIsAuthenticated(!!token); // Eğer token varsa true
-            setLoading(false);
-        };
-        checkAuth();
-    }, []);
-
-    if (loading) {
-        return null; // Yükleniyor ekranı eklenebilir
-    }
+    const isAuth = useSelector(state => state.user.isAuth)
 
     return (
         <NavigationContainer>
-            {isAuthenticated ? <AppStack /> : <AuthStack />}
+            {!isAuth ? <><AuthStack /></> : <><AppStack /><CustomUserBottomBar /></>}
         </NavigationContainer>
-    );
-};
 
-export default RootNavigation;
+    )
+}
+
+export default RootNavigation

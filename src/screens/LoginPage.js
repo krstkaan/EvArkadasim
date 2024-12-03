@@ -3,13 +3,13 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, ImageBackground, A
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useDispatch } from 'react-redux';
+import { login } from '../redux/UserSlice';
 import styles from '../../assets/styles/style';
 
 export default function LoginPage({ navigation }) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-
-    //const dispatch = useDispatch();
+    const dispatch = useDispatch();
 
     const handleLogin = async () => {
         if (!email || !password) {
@@ -38,11 +38,11 @@ export default function LoginPage({ navigation }) {
                 await AsyncStorage.setItem('email', email);
                 setEmail('');
                 setPassword('');
-                // dispatch(login(token));
+                dispatch(login(token));
                 // if (response.data.yetki == "helios") {
                 //     dispatch(adminlogin(token));
                 // }
-                navigation.navigate('HomePage');
+                //navigation.navigate('HomePage');
             }
 
         } catch (error) {
