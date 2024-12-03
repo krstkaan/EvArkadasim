@@ -66,7 +66,7 @@
           },
           welcomeContainer: {
             paddingHorizontal: 20,
-            paddingVertical: 20,
+            paddingVertical: 30,
             backgroundColor: 'rgb(243 239 239)',
             shadowColor: '#000',
             shadowOffset: { width: 0, height: 2 },
@@ -80,7 +80,7 @@
           welcomeText: {
             fontSize: 24,
             fontWeight: 'bold',
-            color: '#333',
+            color: '#4e9c2e',
             marginBottom: 5,
           },
           nameText: {
