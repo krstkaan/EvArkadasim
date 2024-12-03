@@ -42,6 +42,7 @@ export default function LoginPage({ navigation }) {
                 // if (response.data.yetki == "helios") {
                 //     dispatch(adminlogin(token));
                 // }
+                navigation.navigate('HomePage');
             }
 
         } catch (error) {
@@ -91,4 +92,3 @@ export default function LoginPage({ navigation }) {
         </ImageBackground>
     );
 }
-

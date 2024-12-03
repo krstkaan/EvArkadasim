@@ -6,7 +6,7 @@ import BarItem from './BarItem';
 
 
 
-const CustomUserBottomBar = () => {
+const CustomGuestBottomBar = () => {
     const [isKeyboardVisible, setKeyboardVisible] = useState(false);
 
     const navigationState = useNavigationState((state) => state); // navigationState ile mevcut state alınıyor
@@ -58,7 +58,7 @@ const CustomUserBottomBar = () => {
                 itemIcon={faUser}
                 iconSize={25}
                 iconColor="black"
-                isActive={currentRouteName === 'MyAccountPage'} // Aktif rota kontrolü
+                isActive={currentRouteName === 'LoginPage'}
             />
 
 
@@ -68,7 +68,7 @@ const CustomUserBottomBar = () => {
     );
 };
 
-export default CustomUserBottomBar;
+export default CustomGuestBottomBar;
 
 const styles = StyleSheet.create({
     container: {
