@@ -32,10 +32,13 @@ export default function LoginPage({ navigation }) {
 
             if (response.data.sonuc === '0') {
                 Alert.alert('Hata', response.data.mesaj, [{ text: 'Tamam' }]);
-            } else {
+            } else if (response.data.sonuc === '1') {
+                const displayname = response.data.displayname; // Kullanıcı adı API'den geliyorsa
                 const token = response.data.token;
                 await AsyncStorage.setItem('token', token);
-                await AsyncStorage.setItem('email', email);
+                await AsyncStorage.setItem('displayname', displayname); // Kullanıcı adını kaydet  
+                await AsyncStorage.setItem('email', email);              
+                
                 setEmail('');
                 setPassword('');
                 dispatch(login(token));
@@ -91,5 +94,5 @@ export default function LoginPage({ navigation }) {
             </View>
         </ImageBackground>
     );
-    
+
 }
