@@ -60,7 +60,7 @@ const SignupPage = ({ navigation }) => {
             source={require('../../assets/images/backgroundlogin.png')}
             style={styles.backgroundImage}
         >
-            <View style={styles.container}>
+            <View style={styles.loginContainer}>
                 <Text style={styles.label}>Ad Soyad</Text>
                 <TextInput
                     value={displayName}

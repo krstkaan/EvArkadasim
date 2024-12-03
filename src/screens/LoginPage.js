@@ -56,7 +56,7 @@ export default function LoginPage({ navigation }) {
             source={require('../../assets/images/backgroundlogin.png')}
             style={styles.backgroundImage}
         >
-            <View style={styles.container}>
+            <View style={styles.loginContainer}>
                 <Text style={styles.label}>Email</Text>
                 <TextInput
                     style={styles.input}
@@ -91,4 +91,5 @@ export default function LoginPage({ navigation }) {
             </View>
         </ImageBackground>
     );
+    
 }

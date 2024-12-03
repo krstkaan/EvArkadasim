@@ -3,7 +3,6 @@ import { NavigationContainer } from '@react-navigation/native';
 import AuthStack from "./AuthStack";
 import { useSelector } from 'react-redux';
 import CustomUserBottomBar from '../components/component/CustomUserBottomBar';
-import CustomGuestBottomBar from '../components/component/CustomGuestBottomBar';
 import AppStack from './AppStack';
 const RootNavigation = () => {
 

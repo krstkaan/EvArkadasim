@@ -123,6 +123,13 @@
             color: '#666',
             width: '100%',
           },
+          loginContainer: {
+            flex: 1,
+            justifyContent: 'center',
+            padding: 30,
+            alignItems: 'center',
+            // Arka plan rengi yok, çünkü ImageBackground kullanılacak
+        },
     });
 
     export default styles;
