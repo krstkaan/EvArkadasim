@@ -130,6 +130,22 @@
             alignItems: 'center',
             // Arka plan rengi yok, çünkü ImageBackground kullanılacak
         },
+        accountmenu: {
+          padding: 10,
+          borderRadius: 0,
+          marginTop: 10,
+          width: '100%',
+          alignItems: 'left',
+          borderBottomWidth: 1,
+          borderColor: 'rgba(169,169,169,0.3)',
+          marginLeft: 20,
+          marginRight: 20,
+          flexDirection: 'row',
+      },
+      accountmenutext: {
+          fontSize: 16,
+          paddingLeft: 10,
+      },
     });
 
     export default styles;
