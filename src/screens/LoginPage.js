@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ImageBackground, Alert } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ImageBackground, Alert, ActivityIndicator } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useDispatch } from 'react-redux';
@@ -9,7 +9,39 @@ import styles from '../../assets/styles/style';
 export default function LoginPage({ navigation }) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [isLoading, setIsLoading] = useState(true); // Auto-login sırasında yüklenme durumu
     const dispatch = useDispatch();
+
+    useEffect(() => {
+        const checkToken = async () => {
+            try {
+                const token = await AsyncStorage.getItem('token');
+                if (token) {
+                    console.log('Token bulundu:', token);
+
+                    // Auto-login işlemi için backend'e istek gönder
+                    const response = await axios.post('https://roomiefies.com/app/autologin.php', { token });
+
+                    console.log('Auto-login yanıtı:', response.data);
+
+                    if (response.data.isAuth) {
+                        // Eğer doğrulama başarılıysa Redux'a kullanıcıyı giriş yaptır ve ana sayfaya yönlendir
+                        dispatch(login(token));
+                    } else {
+                        console.log('Auto-login başarısız.');
+                    }
+                } else {
+                    console.log('Token bulunamadı.');
+                }
+            } catch (error) {
+                console.error('Auto-login sırasında hata:', error);
+            } finally {
+                setIsLoading(false); // Yüklenme durumunu kaldır
+            }
+        };
+
+        checkToken();
+    }, [dispatch, navigation]);
 
     const handleLogin = async () => {
         if (!email || !password) {
@@ -33,19 +65,15 @@ export default function LoginPage({ navigation }) {
             if (response.data.sonuc === '0') {
                 Alert.alert('Hata', response.data.mesaj, [{ text: 'Tamam' }]);
             } else if (response.data.sonuc === '1') {
-                const displayname = response.data.displayname; // Kullanıcı adı API'den geliyorsa
+                const displayname = response.data.displayname;
                 const token = response.data.token;
                 await AsyncStorage.setItem('token', token);
-                await AsyncStorage.setItem('displayname', displayname); // Kullanıcı adını kaydet  
+                await AsyncStorage.setItem('displayname', displayname);
                 await AsyncStorage.setItem('email', email);              
-                
+
                 setEmail('');
                 setPassword('');
                 dispatch(login(token));
-                // if (response.data.yetki == "helios") {
-                //     dispatch(adminlogin(token));
-                // }
-                //navigation.navigate('HomePage');
             }
 
         } catch (error) {
@@ -53,6 +81,14 @@ export default function LoginPage({ navigation }) {
             Alert.alert('Hata', 'Bir hata oluştu. Lütfen tekrar deneyin.', [{ text: 'Tamam' }]);
         }
     };
+
+    if (isLoading) {
+        return (
+            <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
+                <ActivityIndicator size="large" color="#0000ff" />
+            </View>
+        );
+    }
 
     return (
         <ImageBackground
@@ -94,5 +130,4 @@ export default function LoginPage({ navigation }) {
             </View>
         </ImageBackground>
     );
-
 }
