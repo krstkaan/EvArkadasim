@@ -20,6 +20,9 @@ const CreateAdPage = () => {
   const [images, setImages] = useState([]);
   const [minBudget, setMinBudget] = useState('');
   const [maxBudget, setMaxBudget] = useState('');
+  const [selectedIl, setSelectedIl] = useState('');
+  const [selectedIlce, setSelectedIlce] = useState('');
+  const [selectedMahalle, setSelectedMahalle] = useState('');
 
 
 
@@ -75,37 +78,28 @@ const CreateAdPage = () => {
       />
 
       <Text style={styles.label}>Cinsiyet</Text>
-
-      <View style={styles.checkboxContainer}>
-        <TouchableOpacity onPress={() => setCinsiyet('Erkek')}>
-          <Text style={[styles.checkbox, cinsiyet === 'Erkek' && styles.selected]}>
-            {cinsiyet === 'Erkek' ? '☑' : '☐'} Erkek
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity onPress={() => setCinsiyet('Kadın')}>
-          <Text style={[styles.checkbox, cinsiyet === 'Kadın' && styles.selected]}>
-            {cinsiyet === 'Kadın' ? '☑' : '☐'} Kadın
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity onPress={() => setCinsiyet('Diğer')}>
-          <Text style={[styles.checkbox, cinsiyet === 'Diğer' && styles.selected]}>
-            {cinsiyet === 'Diğer' ? '☑' : '☐'} Diğer
-          </Text>
-        </TouchableOpacity>
+      <View style={styles.pickerContainer}>
+        <Picker
+          selectedValue={cinsiyet}
+          onValueChange={(itemValue) => setCinsiyet(itemValue)}
+          style={styles.picker}
+        >
+          <Picker.Item label="" value="" />
+          <Picker.Item label="" value="" />
+          <Picker.Item label="" value="" />
+        </Picker>
       </View>
+      <Text style={styles.selectedValue}>Seçilen: {cinsiyet}</Text>
 
       <Text style={styles.label}>Yaş Aralığı</Text>
-
       <Picker
         selectedValue={selectedAgeRange}
         onValueChange={(itemValue) => setSelectedAgeRange(itemValue)}
         style={styles.picker}
       >
-        <Picker.Item label="18-25" value="18-25" />
-        <Picker.Item label="25-35" value="25-35" />
-        <Picker.Item label="35+" value="35+" />
+        <Picker.Item label="" value="" />
+        <Picker.Item label="" value="" />
+        <Picker.Item label="" value="" />
       </Picker>
 
       {selectedAgeRange && (
@@ -127,11 +121,57 @@ const CreateAdPage = () => {
         onValueChange={(itemValue) => setSelectedPropertyType(itemValue)}
         style={styles.picker}
       >
-        <Picker.Item label="1+1" value="1+1" />
-        <Picker.Item label="2+1" value="2+1" />
-        <Picker.Item label="3+1" value="3+1" />
-        <Picker.Item label="Stüdyo" value="Stüdyo" />
-        <Picker.Item label="5+" value="5+" />
+        <Picker.Item label="" value="" />
+        <Picker.Item label="" value="" />
+        <Picker.Item label="" value="" />
+      </Picker>
+
+      {selectedPropertyType && (
+        <Text style={styles.selectedText}></Text>
+      )}
+
+      <Text style={styles.label}>Ev metrekare</Text>
+
+      <Picker
+        selectedValue={selectedPropertyType}
+        onValueChange={(itemValue) => setSelectedPropertyType(itemValue)}
+        style={styles.picker}
+      >
+        <Picker.Item label="" value="" />
+        <Picker.Item label="" value="" />
+        <Picker.Item label="" value="" />
+      </Picker>
+
+      {selectedPropertyType && (
+        <Text style={styles.selectedText}></Text>
+      )}
+
+      <Text style={styles.label}>Eşya Durumu</Text>
+
+      <Picker
+        selectedValue={selectedPropertyType}
+        onValueChange={(itemValue) => setSelectedPropertyType(itemValue)}
+        style={styles.picker}
+      >
+        <Picker.Item label="" value="" />
+        <Picker.Item label="" value="" />
+        <Picker.Item label="" value="" />
+      </Picker>
+
+      {selectedPropertyType && (
+        <Text style={styles.selectedText}></Text>
+      )}
+
+      <Text style={styles.label}>Isıtma</Text>
+
+      <Picker
+        selectedValue={selectedPropertyType}
+        onValueChange={(itemValue) => setSelectedPropertyType(itemValue)}
+        style={styles.picker}
+      >
+        <Picker.Item label="" value="" />
+        <Picker.Item label="" value="" />
+        <Picker.Item label="" value="" />
       </Picker>
 
       {selectedPropertyType && (
@@ -148,21 +188,63 @@ const CreateAdPage = () => {
       />
 
       <Text style={styles.label}>Konum</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Ev Konumu"
-        value={location}
-        onChangeText={setLocation}
-      />
+      <View style={styles.row}>
+        {/* İl Dropdown */}
+        <View style={styles.dropdownContainer}>
+          <Text style={styles.subLabel}>İl</Text>
+          <Picker
+            selectedValue={selectedIl}
+            onValueChange={(itemValue) => {
+              setSelectedIl(itemValue);
+              setSelectedIlce('');
+              setSelectedMahalle('');
+            }}
+            style={styles.picker}
+          >
+            <Picker.Item label="" value="" />
+            <Picker.Item label="" value="" />
+            <Picker.Item label="" value="" />
+          </Picker>
+        </View>
 
-      <Text style={styles.label}>Bina Yaşı</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Kaç Yıllık Bina"
-        value={buildingAge}
-        onChangeText={setBuildingAge}
-        keyboardType="numeric"
-      />
+        {/* İlçe Dropdown */}
+        <View style={styles.dropdownContainer}>
+          <Text style={styles.subLabel}>İlçe</Text>
+          <Picker
+            selectedValue={selectedIlce}
+            onValueChange={(itemValue) => {
+              setSelectedIlce(itemValue);
+              setSelectedMahalle('');
+            }}
+            style={styles.picker}
+          >
+            <Picker.Item label="" value="" />
+            <Picker.Item label="" value="" />
+            <Picker.Item label="" value="" />
+          </Picker>
+        </View>
+
+        {/* Mahalle Dropdown */}
+        <View style={styles.dropdownContainer}>
+          <Text style={styles.subLabel}>Mahalle</Text>
+          <Picker
+            selectedValue={selectedMahalle}
+            onValueChange={(itemValue) => setSelectedMahalle(itemValue)}
+            style={styles.picker}
+          >
+            <Picker.Item label="" value="" />
+            <Picker.Item label="" value="" />
+            <Picker.Item label="" value="" />
+          </Picker>
+        </View>
+      </View>
+
+      {selectedMahalle && (
+        <Text style={styles.selectedText}>
+          Seçim: {selectedIl} / {selectedIlce} / {selectedMahalle}
+        </Text>
+      )}
+
 
       <Text style={styles.label}>Misafir Kabul Durumu</Text>
       <Picker
@@ -170,8 +252,8 @@ const CreateAdPage = () => {
         onValueChange={(itemValue) => setGuestAllowed(itemValue)}
         style={styles.picker}
       >
-        <Picker.Item label="Kabul Ediliyor" value="yes" />
-        <Picker.Item label="Kabul Edilmiyor" value="no" />
+        <Picker.Item label="" value="" />
+        <Picker.Item label="" value="" />
       </Picker>
 
       <Text style={styles.label}>Bütçe Aralığı</Text>
@@ -239,6 +321,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   picker: {
+    backgroundColor: '#f9f9f9',
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 5,
@@ -268,6 +351,28 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: '#fff',
-    fontSize: 16,
-  },
+    fontSize: 16,
+  },
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 15,
+  },
+  dropdownContainer: {
+    flex: 1,
+    marginHorizontal: 5,
+  },
+  subLabel: {
+    fontSize: 16,
+    color: '#666',
+    marginBottom: 2,
+    textAlign: 'left',
+  },
+  selectedText: {
+    fontSize: 16,
+    color: '#666',
+    marginTop: 20,
+    textAlign: 'center',
+  },
 });
