@@ -146,6 +146,86 @@
           fontSize: 16,
           paddingLeft: 10,
       },
+      contentContainerStyle: {
+        padding: 20,
+        backgroundColor: '#f8f9fa',
+      },
+      headerContainer: {
+        marginBottom: 20,
+        alignItems: 'center',
+      },
+      headerText: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: '#343a40',
+      },
+      label: {
+        fontSize: 16,
+        fontWeight: '600',
+        color: '#495057',
+        marginBottom: 8,
+        marginTop: 16,
+      },
+      subLabel: {
+        fontSize: 14,
+        fontWeight: '500',
+        color: '#6c757d',
+      },
+      input: {
+        height: 50,
+        borderColor: '#ced4da',
+        borderWidth: 1,
+        borderRadius: 8,
+        paddingHorizontal: 15,
+        fontSize: 16,
+        backgroundColor: '#fff',
+      },
+      pickerContainer: {
+        borderColor: '#ced4da',
+        borderWidth: 1,
+        borderRadius: 8,
+        backgroundColor: '#fff',
+        overflow: 'hidden',
+        marginBottom: 10,
+      },
+      picker: {
+        height: 50,
+        fontSize: 16,
+        paddingLeft: 10,
+        color: '#495057',
+      },
+      row: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginVertical: 10,
+      },
+      dropdownContainer: {
+        flex: 1,
+        marginHorizontal: 5,
+      },
+      selectedText: {
+        marginTop: 10,
+        fontSize: 14,
+        fontStyle: 'italic',
+        color: '#6c757d',
+      },
+      button: {
+        height: 50,
+        backgroundColor: '#007bff',
+        borderRadius: 8,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginVertical: 15,
+      },
+      buttonText: {
+        color: '#fff',
+        fontSize: 16,
+        fontWeight: '600',
+      },
+      submitButton: {
+        backgroundColor: '#28a745',
+      },
+ 
     });
 
     export default styles;

@@ -1,30 +1,54 @@
-import React, { useState, } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView, Image } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { launchImageLibrary } from 'react-native-image-picker';
+import axios from 'axios';
+import styles from '../../assets/styles/style';
 
 const CreateAdPage = () => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [roomCount, setRoomCount] = useState('');
   const [rent, setRent] = useState('');
-  const [numPeople, setNumPeople] = useState('');
   const [location, setLocation] = useState('');
   const [buildingAge, setBuildingAge] = useState('');
   const [cinsiyet, setCinsiyet] = useState('');
-  const [selectedAgeRange, setSelectedAgeRange] = useState('');
-  const [selectedPropertyType, setSelectedPropertyType] = useState('');
-  const [internet, setInternet] = useState(false);
-  const [schoolsituation, setSchoolSituation] = useState('');
-  const [guestAllowed, setGuestAllowed] = useState('');
-  const [images, setImages] = useState([]);
-  const [minBudget, setMinBudget] = useState('');
-  const [maxBudget, setMaxBudget] = useState('');
+  const [esya, setEsya] = useState('');
+  const [dairetipi, setDaireTipi] = useState('');
+  const [isitmaturu, setIsitmaTuru] = useState('');
+  const [yasaraligi, setYasAraligi] = useState('');
   const [selectedIl, setSelectedIl] = useState('');
   const [selectedIlce, setSelectedIlce] = useState('');
   const [selectedMahalle, setSelectedMahalle] = useState('');
+  const [genderOptions, setGenderOptions] = useState([]);
+  const [DaireOptions, setDaireOptions] = useState([]);
+  const [EsyaOptions, setEsyaOptions] = useState([]);
+  const [IsitmaOptions, setIsitmaOptions] = useState([]);
+  const [ArkadasYasOptions, setArkadasYasOptions] = useState([]);
+  const [images, setImages] = useState([]);
+  const [error, setError] = useState(null);
 
-
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [genderRes, daireRes, esyaRes, isitmaRes, yasRes] = await Promise.all([
+          axios.get('https://roomiefies.com/app/ilangender.php'),
+          axios.get('https://roomiefies.com/app/ilandairetip.php'),
+          axios.get('https://roomiefies.com/app/ilanesya.php'),
+          axios.get('https://roomiefies.com/app/ilanisitma.php'),
+          axios.get('https://roomiefies.com/app/ilanarkadasyas.php'),
+        ]);
+        setGenderOptions(genderRes.data);
+        setDaireOptions(daireRes.data);
+        setEsyaOptions(esyaRes.data);
+        setIsitmaOptions(isitmaRes.data);
+        setArkadasYasOptions(yasRes.data);
+      } catch (err) {
+        setError('Veriler alınırken bir hata oluştu.');
+        console.error('Error fetching data:', err);
+      }
+    };
+    fetchData();
+  }, []);
 
   const selectImages = () => {
     launchImageLibrary({ mediaType: 'photo', selectionLimit: 0 }, (response) => {
@@ -34,31 +58,36 @@ const CreateAdPage = () => {
     });
   };
 
-
-
-
   const handleSubmit = () => {
-    console.log({
+    if (!title || !description || !rent || !selectedIl || !selectedIlce || !selectedMahalle) {
+      alert('Lütfen tüm gerekli alanları doldurun.');
+      return;
+    }
+    console.log('Form gönderildi:', {
       title,
       description,
-      roomCount,
       rent,
-      numPeople,
       location,
       buildingAge,
-      amenities: { internet, washingMachine },
-      cleaningFrequency,
-      guestAllowed,
-      budget: { minBudget, maxBudget },
-      images
+      cinsiyet,
+      esya,
+      dairetipi,
+      isitmaturu,
+      yasaraligi,
+      selectedIl,
+      selectedIlce,
+      selectedMahalle,
+      images,
     });
   };
 
   return (
-    <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
+    <ScrollView showsVerticalScrollIndicator={false} style={styles.contentContainerStyle}>
       <View style={styles.headerContainer}>
-        <Text style={styles.headerText}></Text>
+        <Text style={styles.headerText}>İlan Oluştur</Text>
       </View>
+
+      {error && <Text style={{ color: 'red', marginBottom: 10 }}>{error}</Text>}
 
       <Text style={styles.label}>Başlık</Text>
       <TextInput
@@ -77,106 +106,75 @@ const CreateAdPage = () => {
         multiline
       />
 
-      <Text style={styles.label}>Cinsiyet</Text>
+      <Text style={styles.label}>Tercih Edilen Ev Arkadaşı Cinsiyeti</Text>
       <View style={styles.pickerContainer}>
         <Picker
           selectedValue={cinsiyet}
           onValueChange={(itemValue) => setCinsiyet(itemValue)}
           style={styles.picker}
         >
-          <Picker.Item label="" value="" />
-          <Picker.Item label="" value="" />
-          <Picker.Item label="" value="" />
+          <Picker.Item label="Seçiniz" value="" />
+          {genderOptions.map((gender) => (
+            <Picker.Item key={gender.id} label={gender.title} value={gender.id} />
+          ))}
         </Picker>
       </View>
-      <Text style={styles.selectedValue}>Seçilen: {cinsiyet}</Text>
 
-      <Text style={styles.label}>Yaş Aralığı</Text>
-      <Picker
-        selectedValue={selectedAgeRange}
-        onValueChange={(itemValue) => setSelectedAgeRange(itemValue)}
-        style={styles.picker}
-      >
-        <Picker.Item label="" value="" />
-        <Picker.Item label="" value="" />
-        <Picker.Item label="" value="" />
-      </Picker>
+      <Text style={styles.label}>Tercih Edilen Ev Arkadaşı Yaş Aralığı</Text>
+      <View style={styles.pickerContainer}>
+        <Picker
+          selectedValue={yasaraligi}
+          onValueChange={(itemValue) => setYasAraligi(itemValue)}
+          style={styles.picker}
+        >
+          <Picker.Item label="Seçiniz" value="" />
+          {ArkadasYasOptions.map((yasaraligi) => (
+            <Picker.Item key={yasaraligi.id} label={yasaraligi.aralik} value={yasaraligi.id} />
+          ))}
+        </Picker>
+      </View>
 
-      {selectedAgeRange && (
-        <Text style={styles.selectedText}></Text>
-      )}
-
-      <Text style={styles.label}>Okul/İş</Text>
-      <TextInput
-        style={styles.input}
-        placeholder=""
-        value={schoolsituation}
-        onChangeText={setSchoolSituation}
-      />
-
-      <Text style={styles.label}>Daire Tipi</Text>
-
-      <Picker
-        selectedValue={selectedPropertyType}
-        onValueChange={(itemValue) => setSelectedPropertyType(itemValue)}
-        style={styles.picker}
-      >
-        <Picker.Item label="" value="" />
-        <Picker.Item label="" value="" />
-        <Picker.Item label="" value="" />
-      </Picker>
-
-      {selectedPropertyType && (
-        <Text style={styles.selectedText}></Text>
-      )}
-
-      <Text style={styles.label}>Ev metrekare</Text>
-
-      <Picker
-        selectedValue={selectedPropertyType}
-        onValueChange={(itemValue) => setSelectedPropertyType(itemValue)}
-        style={styles.picker}
-      >
-        <Picker.Item label="" value="" />
-        <Picker.Item label="" value="" />
-        <Picker.Item label="" value="" />
-      </Picker>
-
-      {selectedPropertyType && (
-        <Text style={styles.selectedText}></Text>
-      )}
+      <Text style={styles.label}>Ev Tipi</Text>
+      <View style={styles.pickerContainer}>
+        <Picker
+          selectedValue={dairetipi}
+          onValueChange={(itemValue) => setDaireTipi(itemValue)}
+          style={styles.picker}
+        >
+          <Picker.Item label="Seçiniz" value="" />
+          {DaireOptions.map((daire) => (
+            <Picker.Item key={daire.id} label={daire.tip_adi} value={daire.id} />
+          ))}
+        </Picker>
+      </View>
 
       <Text style={styles.label}>Eşya Durumu</Text>
+      <View style={styles.pickerContainer}>
+        <Picker
+          selectedValue={esya}
+          onValueChange={(itemValue) => setEsya(itemValue)}
+          style={styles.picker}
+        >
+          <Picker.Item label="Seçiniz" value="" />
+          {EsyaOptions.map((esya) => (
+            <Picker.Item key={esya.id} label={esya.durum_adi} value={esya.id} />
+          ))}
+        </Picker>
+      </View>
 
-      <Picker
-        selectedValue={selectedPropertyType}
-        onValueChange={(itemValue) => setSelectedPropertyType(itemValue)}
-        style={styles.picker}
-      >
-        <Picker.Item label="" value="" />
-        <Picker.Item label="" value="" />
-        <Picker.Item label="" value="" />
-      </Picker>
-
-      {selectedPropertyType && (
-        <Text style={styles.selectedText}></Text>
-      )}
-
-      <Text style={styles.label}>Isıtma</Text>
-
-      <Picker
-        selectedValue={selectedPropertyType}
-        onValueChange={(itemValue) => setSelectedPropertyType(itemValue)}
-        style={styles.picker}
-      >
-        <Picker.Item label="" value="" />
-        <Picker.Item label="" value="" />
-        <Picker.Item label="" value="" />
-      </Picker>
-
-      {selectedPropertyType && (
-        <Text style={styles.selectedText}></Text>
-      )}
+      <Text style={styles.label}>Isıtma Durumu</Text>
+      <View style={styles.pickerContainer}>
+        <Picker
+          selectedValue={isitmaturu}
+          onValueChange={(itemValue) => setIsitmaTuru(itemValue)}
+          style={styles.picker}
+        >
+          <Picker.Item label="Seçiniz" value="" />
+          {IsitmaOptions.map((isitmaturu) => (
+            <Picker.Item key={isitmaturu.id} label={isitmaturu.tip_adi} value={isitmaturu.id} />
+          ))}
+        </Picker>
+      </View>
 
       <Text style={styles.label}>Kira Bedeli</Text>
       <TextInput
@@ -187,192 +185,22 @@ const CreateAdPage = () => {
         keyboardType="numeric"
       />
 
-      <Text style={styles.label}>Konum</Text>
-      <View style={styles.row}>
-        {/* İl Dropdown */}
-        <View style={styles.dropdownContainer}>
-          <Text style={styles.subLabel}>İl</Text>
-          <Picker
-            selectedValue={selectedIl}
-            onValueChange={(itemValue) => {
-              setSelectedIl(itemValue);
-              setSelectedIlce('');
-              setSelectedMahalle('');
-            }}
-            style={styles.picker}
-          >
-            <Picker.Item label="" value="" />
-            <Picker.Item label="" value="" />
-            <Picker.Item label="" value="" />
-          </Picker>
-        </View>
-
-        {/* İlçe Dropdown */}
-        <View style={styles.dropdownContainer}>
-          <Text style={styles.subLabel}>İlçe</Text>
-          <Picker
-            selectedValue={selectedIlce}
-            onValueChange={(itemValue) => {
-              setSelectedIlce(itemValue);
-              setSelectedMahalle('');
-            }}
-            style={styles.picker}
-          >
-            <Picker.Item label="" value="" />
-            <Picker.Item label="" value="" />
-            <Picker.Item label="" value="" />
-          </Picker>
-        </View>
-
-        {/* Mahalle Dropdown */}
-        <View style={styles.dropdownContainer}>
-          <Text style={styles.subLabel}>Mahalle</Text>
-          <Picker
-            selectedValue={selectedMahalle}
-            onValueChange={(itemValue) => setSelectedMahalle(itemValue)}
-            style={styles.picker}
-          >
-            <Picker.Item label="" value="" />
-            <Picker.Item label="" value="" />
-            <Picker.Item label="" value="" />
-          </Picker>
-        </View>
-      </View>
-
-      {selectedMahalle && (
-        <Text style={styles.selectedText}>
-          Seçim: {selectedIl} / {selectedIlce} / {selectedMahalle}
-        </Text>
-      )}
-
-
-      <Text style={styles.label}>Misafir Kabul Durumu</Text>
-      <Picker
-        selectedValue={guestAllowed}
-        onValueChange={(itemValue) => setGuestAllowed(itemValue)}
-        style={styles.picker}
-      >
-        <Picker.Item label="" value="" />
-        <Picker.Item label="" value="" />
-      </Picker>
-
-      <Text style={styles.label}>Bütçe Aralığı</Text>
-      <View style={styles.budgetContainer}>
-        <TextInput
-          style={[styles.input, { flex: 1, marginRight: 5 }]}
-          placeholder="Minimum"
-          value={minBudget}
-          onChangeText={setMinBudget}
-          keyboardType="numeric"
-        />
-        <TextInput
-          style={[styles.input, { flex: 1, marginLeft: 5 }]}
-          placeholder="Maksimum"
-          value={maxBudget}
-          onChangeText={setMaxBudget}
-          keyboardType="numeric"
-        />
-      </View>
-
       <Text style={styles.label}>Fotoğraf Yükle</Text>
       <TouchableOpacity onPress={selectImages} style={styles.button}>
         <Text style={styles.buttonText}>Fotoğraf Seç</Text>
       </TouchableOpacity>
+      <ScrollView horizontal>
+        {images.map((uri, index) => (
+          <Image key={index} source={{ uri }} style={{ width: 100, height: 100, margin: 5 }} />
+        ))}
+      </ScrollView>
       <Text>Seçilen Fotoğraflar: {images.length}</Text>
 
       <TouchableOpacity onPress={handleSubmit} style={[styles.button, styles.submitButton]}>
         <Text style={styles.buttonText}>İlan Ver</Text>
       </TouchableOpacity>
-    </ScrollView >
+    </ScrollView>
   );
 };
 
 export default CreateAdPage;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 10
-  },
-  headerContainer: {
-    paddingVertical: 15,
-    borderRadius: 0,
-    marginTop: 0,
-    marginLeft: 0,
-    marginRight: 0,
-    width: '100%',
-  },
-  headerText: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#fff',
-    textAlign: 'center',
-  },
-  label: {
-    fontSize: 16,
-    marginVertical: 8,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
-    padding: 10,
-    fontSize: 16,
-    marginBottom: 10,
-  },
-  picker: {
-    backgroundColor: '#f9f9f9',
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
-    marginBottom: 10,
-  },
-  checkboxContainer: {
-    flexDirection: 'row',
-    marginBottom: 10,
-  },
-  checkbox: {
-    fontSize: 16,
-    marginRight: 20,
-  },
-  budgetContainer: {
-    flexDirection: 'row',
-    marginBottom: 10,
-  },
-  button: {
-    backgroundColor: '#007bff',
-    padding: 10,
-    borderRadius: 5,
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  submitButton: {
-    backgroundColor: '#28a745',
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-  },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 15,
-  },
-  dropdownContainer: {
-    flex: 1,
-    marginHorizontal: 5,
-  },
-  subLabel: {
-    fontSize: 16,
-    color: '#666',
-    marginBottom: 2,
-    textAlign: 'left',
-  },
-  selectedText: {
-    fontSize: 16,
-    color: '#666',
-    marginTop: 20,
-    textAlign: 'center',
-  },
-});
