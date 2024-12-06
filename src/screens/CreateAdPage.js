@@ -9,34 +9,41 @@ const CreateAdPage = () => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [rent, setRent] = useState('');
-  const [location, setLocation] = useState('');
-  const [buildingAge, setBuildingAge] = useState('');
+  const [size, setSize] = useState('');
+  const [binayasi, setBinaYasi] = useState('');
   const [cinsiyet, setCinsiyet] = useState('');
   const [esya, setEsya] = useState('');
   const [dairetipi, setDaireTipi] = useState('');
   const [isitmaturu, setIsitmaTuru] = useState('');
   const [yasaraligi, setYasAraligi] = useState('');
-  const [selectedIl, setSelectedIl] = useState('');
-  const [selectedIlce, setSelectedIlce] = useState('');
-  const [selectedMahalle, setSelectedMahalle] = useState('');
   const [genderOptions, setGenderOptions] = useState([]);
   const [DaireOptions, setDaireOptions] = useState([]);
   const [EsyaOptions, setEsyaOptions] = useState([]);
   const [IsitmaOptions, setIsitmaOptions] = useState([]);
   const [ArkadasYasOptions, setArkadasYasOptions] = useState([]);
-  const [images, setImages] = useState([]);
+  const [BinaYasOptions, setBinaYasOptions] = useState([]);
+  const [ilOptions, setIlOptions] = useState([]);
+  const [selectedIl, setSelectedIl] = useState('');
+  const [ilceOptions, setIlceOptions] = useState([]); // İlçeler için state
+  const [selectedIlce, setSelectedIlce] = useState(''); // Seçilen İlçe
+  const [mahalleOptions, setMahalleOptions] = useState([]); // Mahalle için state
+  const [selectedMahalle, setSelectedMahalle] = useState(''); // Seçilen Mahalle
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [genderRes, daireRes, esyaRes, isitmaRes, yasRes] = await Promise.all([
+        const [genderRes, daireRes, esyaRes, isitmaRes, yasRes, binayasRes, ilRes] = await Promise.all([
           axios.get('https://roomiefies.com/app/ilangender.php'),
           axios.get('https://roomiefies.com/app/ilandairetip.php'),
           axios.get('https://roomiefies.com/app/ilanesya.php'),
           axios.get('https://roomiefies.com/app/ilanisitma.php'),
           axios.get('https://roomiefies.com/app/ilanarkadasyas.php'),
+          axios.get('https://roomiefies.com/app/ilanbinayas.php'),
+          axios.get('https://roomiefies.com/app/getsehir.php'),
         ]);
+        setIlOptions(ilRes.data);
+        setBinaYasOptions(binayasRes.data);
         setGenderOptions(genderRes.data);
         setDaireOptions(daireRes.data);
         setEsyaOptions(esyaRes.data);
@@ -50,43 +57,59 @@ const CreateAdPage = () => {
     fetchData();
   }, []);
 
-  const selectImages = () => {
-    launchImageLibrary({ mediaType: 'photo', selectionLimit: 0 }, (response) => {
-      if (response.assets) {
-        setImages(response.assets.map(asset => asset.uri));
+  // Şehir seçildiğinde ilçeleri API'den çekme
+  useEffect(() => {
+    const fetchIlce = async () => {
+      if (selectedIl) {
+        try {
+          const response = await axios.get('https://roomiefies.com/app/getmahalle.php', {
+            params: { UstID: selectedIl },
+          });
+          setIlceOptions(response.data);
+          setSelectedIlce(''); // İl değiştiğinde ilçe sıfırlanır
+          setMahalleOptions([]); // İl değiştiğinde mahalle sıfırlanır
+          setSelectedMahalle('');
+        } catch (err) {
+          console.error('İlçe verileri alınırken bir hata oluştu:', err.response?.data || err.message);
+          setIlceOptions([]);
+        }
       }
-    });
-  };
+    };
+
+    fetchIlce();
+  }, [selectedIl]);
+
+  // İlçe seçildiğinde mahalleleri API'den çekme
+  useEffect(() => {
+    const fetchMahalle = async () => {
+      if (selectedIlce) {
+        try {
+          const response = await axios.get('https://roomiefies.com/app/getmahalle.php', {
+            params: { UstID: selectedIlce },
+          });
+          setMahalleOptions(response.data);
+          setSelectedMahalle(''); // İlçe değiştiğinde mahalle sıfırlanır
+        } catch (err) {
+          console.error('Mahalle verileri alınırken bir hata oluştu:', err.response?.data || err.message);
+          setMahalleOptions([]);
+        }
+      }
+    };
+
+    fetchMahalle();
+  }, [selectedIlce]);
+  
+  
 
   const handleSubmit = () => {
     if (!title || !description || !rent || !selectedIl || !selectedIlce || !selectedMahalle) {
       alert('Lütfen tüm gerekli alanları doldurun.');
       return;
     }
-    console.log('Form gönderildi:', {
-      title,
-      description,
-      rent,
-      location,
-      buildingAge,
-      cinsiyet,
-      esya,
-      dairetipi,
-      isitmaturu,
-      yasaraligi,
-      selectedIl,
-      selectedIlce,
-      selectedMahalle,
-      images,
-    });
+    console.log('Form gönderildi!', { selectedIl, selectedIlce, selectedMahalle });
   };
-
   return (
     <ScrollView showsVerticalScrollIndicator={false} style={styles.contentContainerStyle}>
-      <View style={styles.headerContainer}>
-        <Text style={styles.headerText}>İlan Oluştur</Text>
-      </View>
-
       {error && <Text style={{ color: 'red', marginBottom: 10 }}>{error}</Text>}
 
       <Text style={styles.label}>Başlık</Text>
@@ -105,12 +128,31 @@ const CreateAdPage = () => {
         onChangeText={setDescription}
         multiline
       />
+      <Text style={styles.label}>Kira Bedeli</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Evin Kirası"
+        value={rent}
+        onChangeText={setRent}
+        keyboardType="numeric"
+      />
+      <Text style={styles.label}>Ev m²</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Evin m²"
+        value={size}
+        onChangeText={setSize}
+        keyboardType="numeric"
+      />
 
       <Text style={styles.label}>Tercih Edilen Ev Arkadaşı Cinsiyeti</Text>
       <View style={styles.pickerContainer}>
         <Picker
           selectedValue={cinsiyet}
-          onValueChange={(itemValue) => setCinsiyet(itemValue)}
+          onValueChange={(itemValue) => {
+            setCinsiyet(itemValue);
+            console.log('Seçilen Cinsiyet ID:', itemValue);
+          }}
           style={styles.picker}
         >
           <Picker.Item label="Seçiniz" value="" />
@@ -124,7 +166,10 @@ const CreateAdPage = () => {
       <View style={styles.pickerContainer}>
         <Picker
           selectedValue={yasaraligi}
-          onValueChange={(itemValue) => setYasAraligi(itemValue)}
+          onValueChange={(itemValue) => {
+            setYasAraligi(itemValue);
+            console.log('Seçilen Yaş Aralığı ID:', itemValue);
+          }}
           style={styles.picker}
         >
           <Picker.Item label="Seçiniz" value="" />
@@ -138,7 +183,10 @@ const CreateAdPage = () => {
       <View style={styles.pickerContainer}>
         <Picker
           selectedValue={dairetipi}
-          onValueChange={(itemValue) => setDaireTipi(itemValue)}
+          onValueChange={(itemValue) => {
+            setDaireTipi(itemValue);
+            console.log('Seçilen Daire Tipi ID:', itemValue);
+          }}
           style={styles.picker}
         >
           <Picker.Item label="Seçiniz" value="" />
@@ -152,7 +200,10 @@ const CreateAdPage = () => {
       <View style={styles.pickerContainer}>
         <Picker
           selectedValue={esya}
-          onValueChange={(itemValue) => setEsya(itemValue)}
+          onValueChange={(itemValue) => {
+            setEsya(itemValue);
+            console.log('Seçilen Eşya Durumu ID:', itemValue);
+          }}
           style={styles.picker}
         >
           <Picker.Item label="Seçiniz" value="" />
@@ -166,7 +217,10 @@ const CreateAdPage = () => {
       <View style={styles.pickerContainer}>
         <Picker
           selectedValue={isitmaturu}
-          onValueChange={(itemValue) => setIsitmaTuru(itemValue)}
+          onValueChange={(itemValue) => {
+            setIsitmaTuru(itemValue);
+            console.log('Seçilen Isıtma Türü ID:', itemValue);
+          }}
           style={styles.picker}
         >
           <Picker.Item label="Seçiniz" value="" />
@@ -176,25 +230,72 @@ const CreateAdPage = () => {
         </Picker>
       </View>
 
-      <Text style={styles.label}>Kira Bedeli</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Evin Kirası"
-        value={rent}
-        onChangeText={setRent}
-        keyboardType="numeric"
-      />
+      <Text style={styles.label}>Bina Yaşı</Text>
+      <View style={styles.pickerContainer}>
+        <Picker
+          selectedValue={binayasi}
+          onValueChange={(itemValue) => {
+            setBinaYasi(itemValue);
+            console.log('Seçilen Bina Yaşı ID:', itemValue);
+          }}
+          style={styles.picker}
+        >
+          <Picker.Item label="Seçiniz" value="" />
+          {BinaYasOptions.map((binayasi) => (
+            <Picker.Item key={binayasi.id} label={binayasi.binayas} value={binayasi.id} />
+          ))}
+        </Picker>
+      </View>
 
-      <Text style={styles.label}>Fotoğraf Yükle</Text>
-      <TouchableOpacity onPress={selectImages} style={styles.button}>
-        <Text style={styles.buttonText}>Fotoğraf Seç</Text>
-      </TouchableOpacity>
-      <ScrollView horizontal>
-        {images.map((uri, index) => (
-          <Image key={index} source={{ uri }} style={{ width: 100, height: 100, margin: 5 }} />
-        ))}
-      </ScrollView>
-      <Text>Seçilen Fotoğraflar: {images.length}</Text>
+      <Text style={styles.label}>Şehir</Text>
+      <View style={styles.pickerContainer}>
+        <Picker
+          selectedValue={selectedIl}
+          onValueChange={(itemValue) => {
+            setSelectedIl(itemValue);
+            console.log('Seçilen İl ID:', itemValue);
+          }}
+          style={styles.picker}
+        >
+          <Picker.Item label="Seçiniz" value="" />
+          {ilOptions.map((il) => (
+            <Picker.Item key={il.id} label={il.SehirIlceMahalleAdi} value={il.id} />
+          ))}
+        </Picker>
+      </View>
+
+      <Text style={styles.label}>İlçe</Text>
+      <View style={styles.pickerContainer}>
+        <Picker
+          selectedValue={selectedIlce}
+          onValueChange={(itemValue) => {
+            setSelectedIlce(itemValue);
+            console.log('Seçilen İlçe ID:', itemValue);
+          }}
+          style={styles.picker}
+        >
+          <Picker.Item label="Seçiniz" value="" />
+          {ilceOptions.map((ilce) => (
+            <Picker.Item key={ilce.id} label={ilce.SehirIlceMahalleAdi} value={ilce.id} />
+          ))}
+        </Picker>
+      </View>
+      <Text style={styles.label}>Mahalle</Text>
+      <View style={styles.pickerContainer}>
+        <Picker
+          selectedValue={selectedMahalle}
+          onValueChange={(itemValue) => {
+            setSelectedMahalle(itemValue);
+            console.log('Seçilen Mahalle ID:', itemValue);
+          }}
+          style={styles.picker}
+        >
+          <Picker.Item label="Seçiniz" value="" />
+          {mahalleOptions.map((mahalle) => (
+            <Picker.Item key={mahalle.id} label={mahalle.SehirIlceMahalleAdi} value={mahalle.id} />
+          ))}
+        </Picker>
+      </View>
 
       <TouchableOpacity onPress={handleSubmit} style={[styles.button, styles.submitButton]}>
         <Text style={styles.buttonText}>İlan Ver</Text>

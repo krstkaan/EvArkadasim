@@ -10,7 +10,11 @@ const AppStack = () => {
     return (
         <Stack.Navigator initialRouteName="HomePage" screenOptions={{ headerShown: false }}>
             <Stack.Screen name="HomePage" component={HomePage} />
-            <Stack.Screen name="CreateAdPage" component={CreateAdPage} />
+            <Stack.Screen
+                name="CreateAdPage"
+                component={CreateAdPage}
+                options={{ headerShown: true, title: "İlan Oluştur" }}
+            />
             <Stack.Screen name="MyAccountPage" component={MyAccountPage} />
         </Stack.Navigator>
     );

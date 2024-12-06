@@ -216,6 +216,7 @@
         alignItems: 'center',
         justifyContent: 'center',
         marginVertical: 15,
+        marginBottom: 100
       },
       buttonText: {
         color: '#fff',
