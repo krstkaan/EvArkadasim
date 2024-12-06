@@ -12,6 +12,7 @@ const HomePage = () => {
         const name = await AsyncStorage.getItem('displayname');
         if (name) {
           setDisplayName(name); // Kullanıcı adını state'e aktar
+          console.log('Display name:', name);
         }
       } catch (error) {
         console.log('Error fetching display name:', error);

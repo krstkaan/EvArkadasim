@@ -66,11 +66,15 @@ export default function LoginPage({ navigation }) {
                 Alert.alert('Hata', response.data.mesaj, [{ text: 'Tamam' }]);
             } else if (response.data.sonuc === '1') {
                 const displayname = response.data.displayname;
+                const userID = response.data.userId;
+                console.log(response.data);
                 const token = response.data.token;
                 await AsyncStorage.setItem('token', token);
                 await AsyncStorage.setItem('displayname', displayname);
-                await AsyncStorage.setItem('email', email);              
-
+                await AsyncStorage.setItem('email', email);  
+                await AsyncStorage.setItem('userID', userID);
+                            
+                
                 setEmail('');
                 setPassword('');
                 dispatch(login(token));

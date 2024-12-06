@@ -4,8 +4,12 @@ import { Picker } from '@react-native-picker/picker';
 import { launchImageLibrary } from 'react-native-image-picker';
 import axios from 'axios';
 import styles from '../../assets/styles/style';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { NavigationContainer } from '@react-navigation/native';
 
-const CreateAdPage = () => {
+
+
+const CreateAdPage = ({ navigation }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [rent, setRent] = useState('');
@@ -57,6 +61,28 @@ const CreateAdPage = () => {
     fetchData();
   }, []);
 
+  const [userID, setUserID] = useState(''); // Kullanıcı adını saklamak için state
+
+  useEffect(() => {
+    const fetchuserID = async () => {
+      try {
+        const userID = await AsyncStorage.getItem('userID');
+        if (userID) {
+          setUserID(userID); // Kullanıcı adını state'e aktar
+          console.log('Kullanıcı ID:', userID);
+        }
+        else {
+          console.log('Kullanıcı ID alınamadı.');
+        }
+      } catch (error) {
+        console.log('Error fetching userID:', error);
+      }
+    };
+
+    fetchuserID();
+  }, []);
+
+
   // Şehir seçildiğinde ilçeleri API'den çekme
   useEffect(() => {
     const fetchIlce = async () => {
@@ -98,16 +124,94 @@ const CreateAdPage = () => {
 
     fetchMahalle();
   }, [selectedIlce]);
-  
-  
+
+
 
   const handleSubmit = () => {
-    if (!title || !description || !rent || !selectedIl || !selectedIlce || !selectedMahalle) {
-      alert('Lütfen tüm gerekli alanları doldurun.');
+    if (!title || !description || !rent || !selectedIl || !selectedIlce || !selectedMahalle || !cinsiyet || !yasaraligi || !dairetipi || !esya || !isitmaturu || !binayasi) {
+      alert('Lütfen tüm alanları doldurunuz.');
+      console.log('Form gönderilemedi. Eksik alanlar var.');
+      console.log({
+        title,
+        description,
+        rent,
+        size,
+        cinsiyet,
+        yasaraligi,
+        dairetipi,
+        esya,
+        isitmaturu,
+        binayasi,
+        selectedIl,
+        selectedIlce,
+        selectedMahalle,
+      });
       return;
     }
-    console.log('Form gönderildi!', { selectedIl, selectedIlce, selectedMahalle });
+
+    // Form verilerini logla
+    console.log('Form gönderildi!', {
+      title,
+      description,
+      rent,
+      size,
+      cinsiyet,
+      yasaraligi,
+      dairetipi,
+      esya,
+      isitmaturu,
+      binayasi,
+      selectedIl,
+      selectedIlce,
+      selectedMahalle,
+      userID,
+    });
+
+    // Form verilerini gönder
+    fetch('https://roomiefies.com/app/ilansave.php', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        title,
+        description,
+        rent,
+        size,
+        cinsiyet,
+        yasaraligi,
+        dairetipi,
+        esya,
+        isitmaturu,
+        binayasi,
+        selectedIl,
+        selectedIlce,
+        selectedMahalle,
+        userID,
+      }),
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (data) {
+          if (data.sonuc === 1) {
+            alert('İlan başarıyla kaydedildi!');
+            console.log('Başarılı:', data);
+            navigation.navigate('HomePage'); // HomePage'e yönlendirme
+
+          } else {
+            alert('İlan kaydedilirken bir hata oluştu.');
+            console.log('Hata:', data);
+          }
+
+        }
+
+      })
+      .catch(error => {
+        alert('Sunucuya bağlanırken bir hata oluştu.');
+        console.error('Hata:', error);
+      });
   };
+
   return (
     <ScrollView showsVerticalScrollIndicator={false} style={styles.contentContainerStyle}>
       {error && <Text style={{ color: 'red', marginBottom: 10 }}>{error}</Text>}
