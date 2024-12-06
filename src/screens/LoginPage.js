@@ -102,7 +102,7 @@ export default function LoginPage({ navigation }) {
             <View style={styles.loginContainer}>
                 <Text style={styles.label}>Email</Text>
                 <TextInput
-                    style={styles.input}
+                    style={styles.inputlogin}
                     placeholder="Email"
                     value={email}
                     onChangeText={setEmail}
@@ -113,7 +113,7 @@ export default function LoginPage({ navigation }) {
 
                 <Text style={styles.label}>Şifre</Text>
                 <TextInput
-                    style={styles.input}
+                    style={styles.inputlogin}
                     placeholder="Şifre"
                     value={password}
                     onChangeText={setPassword}
@@ -121,7 +121,7 @@ export default function LoginPage({ navigation }) {
                     placeholderTextColor="#888"
                 />
 
-                <TouchableOpacity style={styles.button} onPress={handleLogin}>
+                <TouchableOpacity style={styles.buttonlogin} onPress={handleLogin}>
                     <Text style={styles.buttonText}>Giriş Yap</Text>
                 </TouchableOpacity>
 

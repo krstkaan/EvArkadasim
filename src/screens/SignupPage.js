@@ -67,7 +67,7 @@ const SignupPage = ({ navigation }) => {
                     onChangeText={setDisplayname}
                     placeholder="John Doe"
                     placeholderTextColor="#888"
-                    style={styles.input}
+                    style={styles.inputlogin}
                 />
                 <Text style={styles.label}>Email</Text>
                 <TextInput
@@ -76,7 +76,7 @@ const SignupPage = ({ navigation }) => {
                     placeholder="johndoe@gmail.com"
                     keyboardType="email-address"
                     placeholderTextColor="#888"
-                    style={styles.input}
+                    style={styles.inputlogin}
                 />
                 <Text style={styles.label}>Şifre</Text>
                 <TextInput
@@ -85,9 +85,9 @@ const SignupPage = ({ navigation }) => {
                     placeholder="Şifre"
                     secureTextEntry
                     placeholderTextColor="#888"
-                    style={styles.input}
+                    style={styles.inputlogin}
                 />
-                <TouchableOpacity style={styles.button} onPress={handleSignup}>
+                <TouchableOpacity style={styles.buttonlogin} onPress={handleSignup}>
                     <Text style={styles.buttonText}>Kayıt Ol</Text>
                 </TouchableOpacity>
 
