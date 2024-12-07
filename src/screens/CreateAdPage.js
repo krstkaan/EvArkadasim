@@ -1,11 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView, Image } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView, Image, Modal, Pressable, Alert } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { launchImageLibrary } from 'react-native-image-picker';
 import axios from 'axios';
 import styles from '../../assets/styles/style';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { NavigationContainer } from '@react-navigation/native';
+import { StatusBar } from 'expo-status-bar';
+import { Ionicons } from '@expo/vector-icons';
+import { NavigationContainer, useFocusEffect } from '@react-navigation/native';
+import * as ImagePicker from 'expo-image-picker';
+import * as ImageManipulator from 'expo-image-manipulator';
+import CustomButton from '../components/component/CustomButton';
+import Loading from '../components/component/Loading';
 
 
 
@@ -27,11 +33,17 @@ const CreateAdPage = ({ navigation }) => {
   const [ArkadasYasOptions, setArkadasYasOptions] = useState([]);
   const [BinaYasOptions, setBinaYasOptions] = useState([]);
   const [ilOptions, setIlOptions] = useState([]);
+  const [sending, setSending] = useState(false);
   const [selectedIl, setSelectedIl] = useState('');
   const [ilceOptions, setIlceOptions] = useState([]); // İlçeler için state
   const [selectedIlce, setSelectedIlce] = useState(''); // Seçilen İlçe
   const [mahalleOptions, setMahalleOptions] = useState([]); // Mahalle için state
   const [selectedMahalle, setSelectedMahalle] = useState(''); // Seçilen Mahalle
+  const [resimmodalVisible, setResimmodalVisible] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null); // Tam boy gösterilecek resim için state
+  const [image1, setImage1] = useState(null);
+  const [image2, setImage2] = useState(null);
+  const [image3, setImage3] = useState(null);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -69,7 +81,6 @@ const CreateAdPage = ({ navigation }) => {
         const userID = await AsyncStorage.getItem('userID');
         if (userID) {
           setUserID(userID); // Kullanıcı adını state'e aktar
-          console.log('Kullanıcı ID:', userID);
         }
         else {
           console.log('Kullanıcı ID alınamadı.');
@@ -125,10 +136,128 @@ const CreateAdPage = ({ navigation }) => {
     fetchMahalle();
   }, [selectedIlce]);
 
+  const pickimage = async ({ hangiimage }) => {
+    try {
+      Alert.alert(
+        "Seçim Yapın",
+        "Bir fotoğraf çekmek mi yoksa galeriden seçmek mi istersiniz?",
+        [
+          {
+            text: "Galeri",
+            onPress: async () => {
+              try {
+                let result = await ImagePicker.launchImageLibraryAsync({
+                  mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                  allowsEditing: true,
+                  aspect: [9, 16],
+                  quality: 0.5,
+                });
+                await handleImageResult(result, hangiimage);
+              } catch (error) {
+                console.log("Galeri hatası:", error);
+              }
+            },
+          },
+          {
+            text: "Kamera",
+            onPress: async () => {
+              try {
+                let result = await ImagePicker.launchCameraAsync({
+                  allowsEditing: true,
+                  aspect: [9, 16],
+                  quality: 0.5,
+                });
+                await handleImageResult(result, hangiimage);
+              } catch (error) {
+                console.log("Kamera hatası:", error);
+              }
+            },
+          },
+          { text: "İptal", style: "cancel" },
+        ]
+      );
+    } catch (error) {
+      console.log("Ana hata:", error);
+    }
+  };
 
+  const handleImageResult = async (result, hangiimage) => {
+    try {
+      if (!result.cancelled && result.assets && result.assets.length > 0) {
+        const manipulatedImage = await ImageManipulator.manipulateAsync(
+          result.assets[0].uri,
+          [{ resize: { width: 500 } }],
+          { compress: 0.5, format: ImageManipulator.SaveFormat.JPEG }
+        );
+        if (hangiimage === 1) {
+          setImage1(manipulatedImage.uri);
+        }
+        if (hangiimage === 2) {
+          setImage2(manipulatedImage.uri);
+        }
+        if (hangiimage === 3) {
+          setImage3(manipulatedImage.uri);
+        }
+      }
+    } catch (error) {
+      console.log("Resim işleme hatası:", error);
+    }
+  };
+
+
+
+
+  const Card = ({ title, imageUrl, handleOnpress, handleResimsil }) => {
+    return (
+      <View style={styles.cardIlan}>
+        <Pressable onPress={() => showImageFullScreen(imageUrl)}>
+          <Image source={{ uri: imageUrl }} style={styles.cardImageIlan} />
+        </Pressable>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '100%' }}>
+          <CustomButton
+            setWidth='40'
+            handleOnpress={handleOnpress}
+            ButtonColor='#4e9c2e'
+            pressedButtonColor='#4e9c2e'
+            ButtonBorderRadius={20}
+            handleMarginBottom={0}
+            handleIconname="camera"
+            handleIconsize={24}
+            handleIconColor='#fff'
+          />
+          <CustomButton
+            setWidth='40'
+            handleOnpress={handleResimsil}
+            ButtonColor='#4e9c2e'
+            pressedButtonColor='#4e9c2e'
+            ButtonBorderRadius={20}
+            handleMarginBottom={0}
+            handleIconname="trash"
+            handleIconsize={24}
+            handleIconColor='#fff'
+          />
+        </View>
+        <Text style={styles.cardTitleİlan}>{title}</Text>
+      </View>
+    );
+  };
 
   const handleSubmit = () => {
-    if (!title || !description || !rent || !selectedIl || !selectedIlce || !selectedMahalle || !cinsiyet || !yasaraligi || !dairetipi || !esya || !isitmaturu || !binayasi) {
+    if (
+      !title ||
+      !description ||
+      !rent ||
+      !selectedIl ||
+      !selectedIlce ||
+      !selectedMahalle ||
+      !cinsiyet ||
+      !yasaraligi ||
+      !dairetipi ||
+      !esya ||
+      !isitmaturu ||
+      !binayasi ||
+      !image1
+    ) {
       alert('Lütfen tüm alanları doldurunuz.');
       console.log('Form gönderilemedi. Eksik alanlar var.');
       console.log({
@@ -145,76 +274,167 @@ const CreateAdPage = ({ navigation }) => {
         selectedIl,
         selectedIlce,
         selectedMahalle,
+        image1,
       });
       return;
     }
 
-    // Form verilerini logla
-    console.log('Form gönderildi!', {
-      title,
-      description,
-      rent,
-      size,
-      cinsiyet,
-      yasaraligi,
-      dairetipi,
-      esya,
-      isitmaturu,
-      binayasi,
-      selectedIl,
-      selectedIlce,
-      selectedMahalle,
-      userID,
-    });
-
     // Form verilerini gönder
-    fetch('https://roomiefies.com/app/ilansave.php', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        title,
-        description,
-        rent,
-        size,
-        cinsiyet,
-        yasaraligi,
-        dairetipi,
-        esya,
-        isitmaturu,
-        binayasi,
-        selectedIl,
-        selectedIlce,
-        selectedMahalle,
-        userID,
-      }),
-    })
-      .then(response => response.json())
-      .then(data => {
-        if (data) {
-          if (data.sonuc === 1) {
-            alert('İlan başarıyla kaydedildi!');
-            console.log('Başarılı:', data);
-            navigation.navigate('HomePage'); // HomePage'e yönlendirme
-
-          } else {
-            alert('İlan kaydedilirken bir hata oluştu.');
-            console.log('Hata:', data);
-          }
-
-        }
-
-      })
-      .catch(error => {
-        alert('Sunucuya bağlanırken bir hata oluştu.');
-        console.error('Hata:', error);
-      });
+    sendData();
   };
+
+
+  // Form verilerini logla
+  const sendData = async () => {
+
+
+    setSending(true);
+
+    try {
+
+      let formData = new FormData();
+      formData.append('title', title);
+      formData.append('description', description);
+      formData.append('rent', rent);
+      formData.append('size', size);
+      formData.append('cinsiyet', cinsiyet);
+      formData.append('yasaraligi', yasaraligi);
+      formData.append('dairetipi', dairetipi);
+      formData.append('esya', esya);
+      formData.append('isitmaturu', isitmaturu);
+      formData.append('binayasi', binayasi);
+      formData.append('selectedIl', selectedIl);
+      formData.append('selectedIlce', selectedIlce);
+      formData.append('selectedMahalle', selectedMahalle);
+      formData.append('userID', userID);
+
+      if (image1) {
+        const image1Blob = await fetch(image1).then(res => res.blob());
+        formData.append('image1', {
+          uri: image1,
+          name: 'image1.jpg',
+          type: image1Blob.type,
+        });
+      }
+
+      if (image2) {
+        const image2Blob = await fetch(image2).then(res => res.blob());
+        formData.append('image2', {
+          uri: image2,
+          name: 'image2.jpg',
+          type: image2Blob.type,
+        });
+      }
+
+      if (image3) {
+        const image3Blob = await fetch(image3).then(res => res.blob());
+        formData.append('image3', {
+          uri: image3,
+          name: 'image3.jpg',
+          type: image3Blob.type,
+        });
+      }
+
+
+
+
+      const response = await axios.post('https://roomiefies.com/app/ilansave.php', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+        onUploadProgress: (progressEvent) => {
+          let progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+          console.log(`Yükleme İlerlemesi: ${progress}%`);
+        },
+      });
+
+      console.log('Gönderilen veri:', response.data);
+      if (response.data.sonuc === 0) {
+        Alert.alert('Hata', response.data.mesaj, [{ text: 'Tamam' }]);
+        setSending(false);
+      }
+
+      if (response.data.sonuc === 1) {
+        Alert.alert('Başarılı', 'İlan başarıyla kaydedildi!');
+        setTitle('');
+        setDescription('');
+        setRent('');
+        setSize('');
+        setCinsiyet('');
+        setYasAraligi('');
+        setDaireTipi('');
+        setEsya('');
+        setIsitmaTuru('');
+        setBinaYasi('');
+        setSelectedIl('');
+        setSelectedIlce('');
+        setSelectedMahalle('');
+        setSending(false);
+        setImage1('');
+        setImage2('');
+        setImage3('');
+        navigation.navigate('HomePage'); // HomePage'e yönlendirme
+      } else {
+        Alert.alert('Hata', 'İlan kaydedilirken bir hata oluştu.');
+        setSending(false);
+      }
+    } catch (error) {
+      Alert.alert('Hata', 'Sunucuya bağlanırken bir hata oluştu.');
+      console.error('Gönderim hatası:', error);
+      setSending(false);
+    }
+  };
+  
+  if (sending) {
+    return <Loading IndicatorMetni='Onaya Gönderiliyor...' />;
+  }
+
+
 
   return (
     <ScrollView showsVerticalScrollIndicator={false} style={styles.contentContainerStyle}>
       {error && <Text style={{ color: 'red', marginBottom: 10 }}>{error}</Text>}
+      <Modal
+        visible={resimmodalVisible}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setResimmodalVisible(false)}
+      >
+        <StatusBar backgroundColor='rgba(0,0,0,0.8)' barStyle="light-content" />
+        <TouchableOpacity style={{ backgroundColor: 'rgba(0,0,0,0.8)', flex: 1, justifyContent: 'center', alignItems: 'center' }} onPress={() => setResimmodalVisible(false)}>
+          <Image source={{ uri: selectedImage }} style={styles.fullImageIlan} />
+        </TouchableOpacity>
+        <TouchableOpacity style={{
+          backgroundColor: 'rgb(202, 28, 28)', padding: 10, borderRadius: 5, position: 'absolute', top: 10, right: 10
+
+        }} onPress={() => setResimmodalVisible(false)}>
+          <Ionicons name="close" size={24} color="white" />
+        </TouchableOpacity>
+      </Modal>
+
+      <Text style={styles.label}>Ürün Resimleri</Text>
+      <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+        <View style={styles.cardsRowIlan}>
+          <Card
+            title="1/3"
+            imageUrl={image1}
+            handleOnpress={() => pickimage({ hangiimage: 1 })}
+            handleResimsil={() => setImage1(null)}
+          />
+          <Card
+            title="2/3"
+            imageUrl={image2}
+            handleOnpress={() => { if (image1 === null) { pickimage({ hangiimage: 1 }) } else { pickimage({ hangiimage: 2 }) } }}
+            handleResimsil={() => setImage2(null)}
+          />
+          <Card
+            title="3/3"
+            imageUrl={image3}
+            handleOnpress={() => { if (image1 === null) { pickimage({ hangiimage: 1 }) } else if (image2 === null) { pickimage({ hangiimage: 2 }) } else { pickimage({ hangiimage: 3 }) } }}
+            handleResimsil={() => setImage3(null)}
+          />
+        </View>
+      </ScrollView>
 
       <Text style={styles.label}>Başlık</Text>
       <TextInput
@@ -404,6 +624,7 @@ const CreateAdPage = ({ navigation }) => {
       <TouchableOpacity onPress={handleSubmit} style={[styles.button, styles.submitButton]}>
         <Text style={styles.buttonText}>İlan Ver</Text>
       </TouchableOpacity>
+
     </ScrollView>
   );
 };

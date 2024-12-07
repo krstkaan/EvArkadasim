@@ -22,6 +22,8 @@
     "@reduxjs/toolkit": "^2.4.0",
     "axios": "^1.7.7",
     "expo": "^52.0.0",
+    "expo-image-manipulator": "~13.0.5",
+    "expo-image-picker": "~16.0.3",
     "expo-status-bar": "~2.0.0",
     "jsonwebtoken": "^9.0.2",
     "react": "18.3.1",
