@@ -41,7 +41,7 @@ const HomePage = () => {
         console.error('Error fetching ilanlar:', error);
       }
     };
-    
+
 
     fetchDisplayName();
     fetchData();
@@ -61,7 +61,10 @@ const HomePage = () => {
               <Text style={styles.cardTitle}>
                 {item.title.length > 25 ? item.title.substring(0, 25) + '...' : item.title}
               </Text>
-              <Text style={styles.cardTitle}>{item.rent} TL</Text>
+              <View style={styles.rowContainerHomeCard}>
+                <Text style={styles.cardDescription}>{item.rent} TL</Text>
+                <Text style={styles.cardDescriptionRight}>{item.displayName}</Text>
+              </View>
             </TouchableOpacity>
           ))
         ) : (

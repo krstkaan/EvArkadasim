@@ -183,6 +183,21 @@
             elevation: 3,
             alignItems: 'center',
           },
+          rowContainerHomeCard:{
+            flexDirection: 'row',
+            justifyContent: 'space-between', // İki uçta hizalama
+            alignItems: 'center', // Dikey hizalama
+            marginTop: 5, // Opsiyonel
+            width: '100%', // Satırın tam genişlikte olmasını sağlar
+            overflow: 'hidden', // Taşmaları önler
+          },
+          cardDescriptionRight: {
+            fontSize: 14,
+            color: '#333',
+            flex: 1, // Alanı eşit paylaştırır
+            flexShrink: 1, // Alan daraldığında taşmayı önler
+            textAlign: 'right', // Sağa yaslama
+          },
           cardImage: {
             width: '100%',
             height: 150,
@@ -198,8 +213,10 @@
           },
           cardDescription: {
             fontSize: 14,
-            color: '#666',
-            width: '100%',
+            color: '#333',
+            flex: 1, // Alanı eşit paylaştırır
+            flexShrink: 1, // Alan daraldığında taşmayı önler
+            textAlign: 'left', // Sola yaslam
           },
           loginContainer: {
             flex: 1,
