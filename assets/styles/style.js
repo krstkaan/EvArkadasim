@@ -168,6 +168,7 @@
             paddingTop: 10,
             paddingHorizontal: 10,
             alignItems: 'center',
+            paddingBottom: 100,
           },
           card: {
             backgroundColor: '#fff',

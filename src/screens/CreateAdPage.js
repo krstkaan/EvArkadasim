@@ -149,7 +149,7 @@ const CreateAdPage = ({ navigation }) => {
                 let result = await ImagePicker.launchImageLibraryAsync({
                   mediaTypes: ImagePicker.MediaTypeOptions.Images,
                   allowsEditing: true,
-                  aspect: [9, 16],
+                  aspect: [16, 9],
                   quality: 0.5,
                 });
                 await handleImageResult(result, hangiimage);
@@ -164,7 +164,7 @@ const CreateAdPage = ({ navigation }) => {
               try {
                 let result = await ImagePicker.launchCameraAsync({
                   allowsEditing: true,
-                  aspect: [9, 16],
+                  aspect: [16,9],
                   quality: 0.5,
                 });
                 await handleImageResult(result, hangiimage);
