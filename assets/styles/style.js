@@ -198,6 +198,21 @@
             flexShrink: 1, // Alan daraldığında taşmayı önler
             textAlign: 'right', // Sağa yaslama
           },
+          placeholderCard: {
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: 150,
+            backgroundColor: '#f0f0f0',
+            borderRadius: 8,
+            marginBottom: 10,
+          },
+          placeholderText: {
+            color: '#aaa',
+            fontStyle: 'italic',
+          },
+          loadingIndicator: {
+            marginBottom: 5,
+          },
           cardImage: {
             width: '100%',
             height: 150,
