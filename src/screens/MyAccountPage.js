@@ -24,10 +24,55 @@ const MyAccountPage = ({ navigation }) => {
       console.error('Çıkış sırasında bir hata oluştu:', error);
     }
   };
+  const handleEditProfile = () => {
+    navigation.navigate('ProfileEditPage');
+  };
+
+  const handleSettings = () => {
+    navigation.navigate('SettingsPage');
+  };
+
+  const handleMyAds = () => {
+    navigation.navigate('MyAdsPage');
+  };
 
   return (
     <View style={styles.container}>
       <View style={{ width: '100%', alignItems: 'center', justifyContent: 'center' }}>
+
+        <Pressable
+          style={styles.accountmenu}
+          onPress={handleEditProfile}
+          android_ripple={{ color: 'rgba(0,0,0,0.2)' }}
+        >
+          <Ionicons name="person" size={24} color="black" />
+          <Text style={styles.accountmenutext}>Profil Düzenle</Text>
+          <Ionicons name="chevron-forward" size={24} color="black" style={{ marginLeft: 'auto' }} />
+        </Pressable>
+
+
+        <Pressable
+          style={styles.accountmenu}
+          onPress={handleSettings}
+          android_ripple={{ color: 'rgba(0,0,0,0.2)' }}
+        >
+          <Ionicons name="settings" size={24} color="black" />
+          <Text style={styles.accountmenutext}>Ayarlar</Text>
+          <Ionicons name="chevron-forward" size={24} color="black" style={{ marginLeft: 'auto' }} />
+        </Pressable>
+
+
+
+        <Pressable
+          style={styles.accountmenu}
+          onPress={handleMyAds}
+          android_ripple={{ color: 'rgba(0,0,0,0.2)' }}
+        >
+          <Ionicons name="list" size={24} color="black" />
+          <Text style={styles.accountmenutext}>İlanlarım</Text>
+          <Ionicons name="chevron-forward" size={24} color="black" style={{ marginLeft: 'auto' }} />
+        </Pressable>
+
         <Pressable
           style={styles.accountmenu}
           onPress={handleLogout}
@@ -37,6 +82,7 @@ const MyAccountPage = ({ navigation }) => {
           <Text style={styles.accountmenutext}>Çıkış yap</Text>
           <Ionicons name="chevron-forward" size={24} color="black" style={{ marginLeft: 'auto' }} />
         </Pressable>
+
       </View>
     </View>
   );
