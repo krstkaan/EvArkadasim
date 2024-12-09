@@ -1,18 +1,32 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, ActivityIndicator, StyleSheet } from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  ActivityIndicator,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  Dimensions,
+} from 'react-native';
+import { FontAwesome, MaterialIcons } from '@expo/vector-icons';
 import axios from 'axios';
+
+const { width, height } = Dimensions.get('window');
+const IMAGE_HEIGHT = height * 0.5;
 
 const AdDetailsPage = ({ route }) => {
   const { id } = route.params; // Tıklanan ilanın ID'si
   const [data, setData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isFavorite, setIsFavorite] = useState(false); // Favori durumu
 
   useEffect(() => {
     const fetchDetails = async () => {
       try {
         const response = await axios.post(
           'https://roomiefies.com/app/getilandetails.php',
-          new URLSearchParams({ id }) // URL encoded form olarak gönderim
+          new URLSearchParams({ id }) // URL encoded form gönderim
         );
         setData(response.data);
       } catch (error) {
@@ -23,6 +37,10 @@ const AdDetailsPage = ({ route }) => {
     };
     fetchDetails();
   }, [id]);
+
+  const toggleFavorite = () => {
+    setIsFavorite(!isFavorite);
+  };
 
   if (isLoading) {
     return (
@@ -42,24 +60,94 @@ const AdDetailsPage = ({ route }) => {
 
   return (
     <View style={styles.container}>
-      {data.imageurl1 && (
-        <Image
-          source={{ uri: `https://roomiefies.com/app/${data.imageurl1}` }}
-          style={styles.image}
-        />
-      )}
-      <Text style={styles.title}>{data.title || 'Başlık Yok'}</Text>
-      <Text style={styles.description}>{data.description || 'Açıklama Yok'}</Text>
+      {/* Favori ve Paylaş butonları */}
+      <View style={styles.actionButtons}>
+        <TouchableOpacity style={styles.roundButton} onPress={toggleFavorite}>
+          <MaterialIcons
+            name={isFavorite ? 'favorite' : 'favorite-border'}
+            size={24}
+            color="rgb(202, 28, 28)"
+          />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.roundButton}>
+          <FontAwesome name="share" size={24} color="rgb(202, 28, 28)" />
+        </TouchableOpacity>
+      </View>
+      {/* Ürün görseli */}
+      <Image
+        source={{ uri: `https://roomiefies.com/app/${data.imageurl1}` }}
+        style={styles.image}
+      />
+      {/* Ürün detayları */}
+      <ScrollView style={styles.detailsContainer}>
+        <Text style={styles.title}>{data.title || 'Başlık Yok'}</Text>
+        <Text style={styles.description}>{data.description || 'Açıklama Yok'}</Text>
+        <Text style={styles.label}>Satıcı: {data.displayName || 'Bilinmiyor'}</Text>
+        <Text style={styles.label}>
+          Fiyat: {data.rent ? `${Number(data.rent).toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}` : 'Belirtilmemiş'}
+        </Text>
+      </ScrollView>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16 },
-  loaderContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  image: { width: '100%', height: 200, marginBottom: 16 },
-  title: { fontSize: 18, fontWeight: 'bold', marginBottom: 8 },
-  description: { fontSize: 14, color: '#555' },
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  loaderContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  image: {
+    width: width,
+    height: IMAGE_HEIGHT,
+    resizeMode: 'contain',
+    marginTop: 50,
+  },
+  detailsContainer: {
+    padding: 15,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: 'rgb(202, 28, 28)',
+    marginBottom: 8,
+  },
+  description: {
+    fontSize: 16,
+    color: '#555',
+    lineHeight: 22,
+    marginBottom: 10,
+  },
+  label: {
+    fontSize: 16,
+    color: '#333',
+    marginBottom: 10,
+  },
+  actionButtons: {
+    position: 'absolute',
+    top: 120,
+    right: 10,
+    zIndex: 10,
+    flexDirection: 'column',
+  },
+  roundButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#fff',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    elevation: 5,
+  },
 });
 
 export default AdDetailsPage;

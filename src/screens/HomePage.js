@@ -110,7 +110,7 @@ const HomePage = () => {
                 {item.title.length > 25 ? item.title.substring(0, 25) + '...' : item.title}
               </Text>
               <View style={styles.rowContainerHomeCard}>
-                <Text style={styles.cardDescription}>{item.rent} TL/Ay</Text>
+                <Text style={styles.cardDescription}>{item.rent ? `${Number(item.rent).toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}` : 'Belirtilmemiş'}</Text>
                 <Text style={styles.cardDescriptionRight}>{item.displayName}</Text>
               </View>
             </TouchableOpacity>
