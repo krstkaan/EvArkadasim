@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import { useNavigation } from '@react-navigation/native';
 import styles from '../../assets/styles/style';
 
 const HomePage = () => {
@@ -19,6 +20,8 @@ const HomePage = () => {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [offset, setOffset] = useState(0);
   const limit = 4;
+
+  const navigation = useNavigation();
 
   const fetchDisplayName = async () => {
     try {
@@ -36,7 +39,6 @@ const HomePage = () => {
       const response = await axios.get(
         `https://roomiefies.com/app/getilan.php?offset=${newOffset}&limit=${limit}`
       );
-      console.log('API Response:', response.data); // Gelen yanıt burada loglanır
 
       if (Array.isArray(response.data)) {
         const formattedData = response.data.map((item) => ({
@@ -74,6 +76,10 @@ const HomePage = () => {
     }
   };
 
+  const handleCardPress = (id) => {
+    navigation.navigate('AdDetailsPage', { id }); // `AdDetailsPage` sayfasına yönlendir
+  };
+
   return (
     <ScrollView
       style={styles.scrollViewContainer}
@@ -86,7 +92,6 @@ const HomePage = () => {
       </View>
       <View style={styles.cardContainer}>
         {isLoading ? (
-          // Placeholder Card'lar
           Array.from({ length: 6 }).map((_, index) => (
             <View key={index} style={[styles.card, styles.placeholderCard]}>
               <ActivityIndicator size="small" color="#ccc" style={styles.loadingIndicator} />
@@ -94,12 +99,15 @@ const HomePage = () => {
             </View>
           ))
         ) : data.length > 0 ? (
-          // Gerçek Veriler
           data.map((item) => (
-            <TouchableOpacity key={item.id} style={styles.card}>
+            <TouchableOpacity
+              key={item.id}
+              style={styles.card}
+              onPress={() => handleCardPress(item.id)}
+            >
               <Image source={{ uri: item.imageurl1 }} style={styles.cardImage} />
               <Text style={styles.cardTitle}>
-                {item.title.length > 25 ? item.title.substring(0, 25) + '....' : item.title}
+                {item.title.length > 25 ? item.title.substring(0, 25) + '...' : item.title}
               </Text>
               <View style={styles.rowContainerHomeCard}>
                 <Text style={styles.cardDescription}>{item.rent} TL/Ay</Text>

@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomePage from '../screens/HomePage';
 import CreateAdPage from '../screens/CreateAdPage';
 import MyAccountPage from '../screens/MyAccountPage';
+import AdDetailsPage from '../screens/AdDetailsPage';
 
 const Stack = createNativeStackNavigator();
 
@@ -16,6 +17,7 @@ const AppStack = () => {
                 options={{ headerShown: true, title: "İlan Oluştur" }}
             />
             <Stack.Screen name="MyAccountPage" component={MyAccountPage} />
+            <Stack.Screen name="AdDetailsPage" component={AdDetailsPage} />
         </Stack.Navigator>
     );
 };
