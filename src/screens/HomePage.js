@@ -99,7 +99,7 @@ const HomePage = () => {
             <TouchableOpacity key={item.id} style={styles.card}>
               <Image source={{ uri: item.imageurl1 }} style={styles.cardImage} />
               <Text style={styles.cardTitle}>
-                {item.title.length > 25 ? item.title.substring(0, 25) + '...' : item.title}
+                {item.title.length > 25 ? item.title.substring(0, 25) + '....' : item.title}
               </Text>
               <View style={styles.rowContainerHomeCard}>
                 <Text style={styles.cardDescription}>{item.rent} TL/Ay</Text>
