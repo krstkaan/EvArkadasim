@@ -222,7 +222,7 @@
           cardTitle: {
             fontSize: 18,
             fontWeight: 'bold',
-            color: '#333',
+            color: '#4e9c2e',
             marginBottom: 5,
             width: '100%',
           },

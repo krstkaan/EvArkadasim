@@ -6,7 +6,7 @@ import { ActivityIndicator } from 'react-native'
 const Loading = ({ IndicatorMetni }) => {
     return (
         <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color="rgb(202, 28, 28)" />
+            <ActivityIndicator size="large" color="#343a40" />
             <Text style={styles.loadingText}> {IndicatorMetni} </Text>
         </View>
     )
@@ -31,6 +31,6 @@ const styles = StyleSheet.create({
     loadingText: {
         marginTop: 10,
         fontSize: 16,
-        color: 'rgb(202, 28, 28)',
+        color: '#343a40',
     },
 })

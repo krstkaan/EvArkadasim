@@ -405,7 +405,7 @@ const CreateAdPage = ({ navigation }) => {
           <Image source={{ uri: selectedImage }} style={styles.fullImageIlan} />
         </TouchableOpacity>
         <TouchableOpacity style={{
-          backgroundColor: 'rgb(202, 28, 28)', padding: 10, borderRadius: 5, position: 'absolute', top: 10, right: 10
+          backgroundColor: '#343a40', padding: 10, borderRadius: 5, position: 'absolute', top: 10, right: 10
 
         }} onPress={() => setResimmodalVisible(false)}>
           <Ionicons name="close" size={24} color="white" />

@@ -17,7 +17,7 @@ const AppStack = () => {
                 options={{ headerShown: true, title: "İlan Oluştur" }}
             />
             <Stack.Screen name="MyAccountPage" component={MyAccountPage} />
-            <Stack.Screen name="AdDetailsPage" component={AdDetailsPage} />
+            <Stack.Screen name="AdDetailsPage" component={AdDetailsPage} options={{headerShown:true, title: "Kaan"}} />
         </Stack.Navigator>
     );
 };

@@ -66,11 +66,11 @@ const AdDetailsPage = ({ route }) => {
           <MaterialIcons
             name={isFavorite ? 'favorite' : 'favorite-border'}
             size={24}
-            color="rgb(202, 28, 28)"
+            color="#4e9c2e"
           />
         </TouchableOpacity>
         <TouchableOpacity style={styles.roundButton}>
-          <FontAwesome name="share" size={24} color="rgb(202, 28, 28)" />
+          <FontAwesome name="share" size={24} color="#4e9c2e" />
         </TouchableOpacity>
       </View>
       {/* Ürün görseli */}
@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: 'rgb(202, 28, 28)',
+    color: '#4e9c2e',
     marginBottom: 8,
   },
   description: {
