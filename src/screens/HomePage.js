@@ -39,7 +39,7 @@ const HomePage = () => {
       const response = await axios.get(
         `https://roomiefies.com/app/getilan.php?offset=${newOffset}&limit=${limit}`
       );
-
+      console.log('Response:', response.data);
       if (Array.isArray(response.data)) {
         const formattedData = response.data.map((item) => ({
           ...item,
