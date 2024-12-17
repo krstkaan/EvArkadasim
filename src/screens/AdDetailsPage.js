@@ -49,8 +49,29 @@ const AdDetailsPage = ({ route }) => {
         setLoading(false);
       }
     };
+    const checkFavoriteStatus = async () => {
+      const token = await AsyncStorage.getItem("token");
+      if (token) {
+        try {
+          const formData = new FormData();
+          formData.append("ilanid", id);
+
+          formData.append("token", token);
+          const response = await axios.post("https://roomiefies.com/app/checkfavorite.php", formData, {
+            headers: { "Content-Type": "multipart/form-data" },
+          });
+          if (response.data.isFavorite) {
+            setIsFavorite(true);
+          }
+        } catch (error) {
+          console.error("Error checking favorite status:", error);
+        }
+      }
+    };
+    checkFavoriteStatus();
     fetchDetails();
   }, [id]);
+
 
   const toggleFavorite = async () => {
     const token = await AsyncStorage.getItem("token");
@@ -63,20 +84,28 @@ const AdDetailsPage = ({ route }) => {
     }
     try {
       const formData = new FormData();
-      formData.append("favprodid", data.id);
+      formData.append("ilanid", data.id);
       formData.append("token", token);
+      console.log("Form data:", formData);
       const response = await axios.post(
         "https://roomiefies.com/app/userfavorite.php",
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
-      if (response.data.success) {
-        setIsFavorite(!isFavorite);
+      console.log("Favorite response:", response.data);
+
+      if (response.data.sonuc === 1) {
+        // Durumu tersine çevir
+        setIsFavorite((prev) => !prev);
+      } else {
+        Alert.alert("Hata", response.data.mesaj || "Bir hata oluştu.");
       }
     } catch (error) {
       console.error("Error toggling favorite:", error);
+      Alert.alert("Hata", "Favori işlemi sırasında bir hata oluştu.");
     }
   };
+
 
   const handleScroll = (event) => {
     const contentOffsetX = event.nativeEvent.contentOffset.x;
@@ -171,7 +200,6 @@ const AdDetailsPage = ({ route }) => {
         </TouchableOpacity>
       </View>
 
-      {/* İçerik */}
       <View style={styles.detailsContainer}>
         {currentTab === "details" ? (
           <>
