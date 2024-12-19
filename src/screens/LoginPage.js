@@ -25,8 +25,8 @@ export default function LoginPage({ navigation }) {
                     console.log('Auto-login yanıtı:', response.data);
 
                     if (response.data.isAuth) {
-                        // Eğer doğrulama başarılıysa Redux'a kullanıcıyı giriş yaptır ve ana sayfaya yönlendir
-                        dispatch(login(token));
+                        // Eğer doğrulama başarılıysa Redux'a kullanıcıyı giriş yaptır ve onboarding'e yönlendir
+                         dispatch(login(token));
                     } else {
                         console.log('Auto-login başarısız.');
                     }
@@ -71,10 +71,9 @@ export default function LoginPage({ navigation }) {
                 const token = response.data.token;
                 await AsyncStorage.setItem('token', token);
                 await AsyncStorage.setItem('displayname', displayname);
-                await AsyncStorage.setItem('email', email);  
+                await AsyncStorage.setItem('email', email);
                 await AsyncStorage.setItem('userID', userID);
-                            
-                
+
                 setEmail('');
                 setPassword('');
                 dispatch(login(token));
