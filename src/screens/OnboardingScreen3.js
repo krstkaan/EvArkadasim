@@ -2,13 +2,12 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-const OnboardingScreen2 = ({ navigation }) => {
+const OnboardingScreen3 = ({ navigation }) => {
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Nasıl Çalışır?</Text>
-            <Text style={styles.description}>Roomifies, ev arkadaşı arayışında kişisel özelliklerini, yaşam tarzını ve tercihlerini dikkate alarak en uyumlu eşleşmeleri sunar.</Text>
-            <Text style={styles.description}>Sistem, sana uygun adayları bulur ve ev arkadaşlığı sürecini kolaylaştırır.</Text>
-                <View style={styles.buttonContainer}>
+            <Text style={styles.title}>Karakter Testine Başla!</Text>
+            <Text style={styles.description}>Ev arkadaşı adaylarını daha iyi anlayabilmek için karakter testi oluşturduk. Testi tamamlayarak sana en uygun eşleşmeleri bulmamıza yardımcı olabilirsin.</Text>
+             <View style={styles.buttonContainer}>
             <TouchableOpacity
                 style={[styles.nextButton, { left:30, right:'auto' }]}
                 onPress={() => navigation.goBack()}
@@ -18,7 +17,7 @@ const OnboardingScreen2 = ({ navigation }) => {
 
             <TouchableOpacity
                 style={styles.nextButton}
-                onPress={() => navigation.navigate('OnboardingScreen3')}
+                onPress={() => navigation.navigate('LoginPage')}
             >
                 <Ionicons name="arrow-forward-circle-outline" size={40} color="white" />
             </TouchableOpacity>
@@ -27,9 +26,8 @@ const OnboardingScreen2 = ({ navigation }) => {
     );
 };
 
-
 const styles = StyleSheet.create({
-     container: {
+       container: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
@@ -59,11 +57,12 @@ const styles = StyleSheet.create({
         backgroundColor: '#6666ff',
         padding: 10,
         borderRadius: 50,
+        marginLeft: 50,
+        marginRight: 10,
         alignItems: 'center',
         justifyContent: 'center',
 
     },
 });
 
-
-export default OnboardingScreen2;
+export default OnboardingScreen3;

@@ -4,13 +4,12 @@ import HomePage from '../screens/HomePage';
 import CreateAdPage from '../screens/CreateAdPage';
 import MyAccountPage from '../screens/MyAccountPage';
 import AdDetailsPage from '../screens/AdDetailsPage';
-import OnboardingStack from '../screens/OnBoardingScreens/OnboardingStack';
+
 const Stack = createNativeStackNavigator();
 
 const AppStack = () => {
     return (
-        <Stack.Navigator initialRouteName="OnboardingStack" screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="OnboardingStack" component={OnboardingStack} />
+        <Stack.Navigator initialRouteName="HomePage" screenOptions={{ headerShown: false }}>
             <Stack.Screen name="HomePage" component={HomePage} />
             <Stack.Screen
                 name="CreateAdPage"
@@ -18,7 +17,7 @@ const AppStack = () => {
                 options={{ headerShown: true, title: "İlan Oluştur" }}
             />
             <Stack.Screen name="MyAccountPage" component={MyAccountPage} />
-            <Stack.Screen name="AdDetailsPage" component={AdDetailsPage} options={{ headerShown: true, title: "Kaan" }} />
+            <Stack.Screen name="AdDetailsPage" component={AdDetailsPage} options={{headerShown:true, title: "Kaan"}} />
         </Stack.Navigator>
     );
 };
