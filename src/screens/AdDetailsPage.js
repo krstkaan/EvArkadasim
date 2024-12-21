@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   Dimensions,
   Alert,
+  Modal,
 } from "react-native";
 import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import axios from "axios";
@@ -21,11 +22,13 @@ const AdDetailsPage = ({ route }) => {
   const { id } = route.params;
   const [data, setData] = useState(null);
   const [images, setImages] = useState([]);
-  const [currentTab, setCurrentTab] = useState("details"); // Seçilen tab
+  const [currentTab, setCurrentTab] = useState("details");
   const [loading, setLoading] = useState(true);
-  const [isFavorite, setIsFavorite] = useState(false); // Favori durumu
+  const [isFavorite, setIsFavorite] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [showFullDescription, setShowFullDescription] = useState(false); // Açıklama durumu
+  const [showFullDescription, setShowFullDescription] = useState(false);
+  const [fullScreenImage, setFullScreenImage] = useState(null); // Tam ekran görsel
+  const [fullScreenIndex, setFullScreenIndex] = useState(0);
 
   useEffect(() => {
     const fetchDetails = async () => {
@@ -49,6 +52,30 @@ const AdDetailsPage = ({ route }) => {
         setLoading(false);
       }
     };
+    const checkFavoriteStatus = async () => {
+      const token = await AsyncStorage.getItem("token");
+      if (token) {
+        try {
+          const formData = new FormData();
+          formData.append("ilanid", id);
+
+          formData.append("token", token);
+          const response = await axios.post(
+            "https://roomiefies.com/app/checkfavorite.php",
+            formData,
+            {
+              headers: { "Content-Type": "multipart/form-data" },
+            }
+          );
+          if (response.data.isFavorite) {
+            setIsFavorite(true);
+          }
+        } catch (error) {
+          console.error("Error checking favorite status:", error);
+        }
+      }
+    };
+    checkFavoriteStatus();
     fetchDetails();
   }, [id]);
 
@@ -63,18 +90,24 @@ const AdDetailsPage = ({ route }) => {
     }
     try {
       const formData = new FormData();
-      formData.append("favprodid", data.id);
+      formData.append("ilanid", data.id);
       formData.append("token", token);
+      console.log("Form data:", formData);
       const response = await axios.post(
         "https://roomiefies.com/app/userfavorite.php",
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
-      if (response.data.success) {
-        setIsFavorite(!isFavorite);
+      console.log("Favorite response:", response.data);
+
+      if (response.data.sonuc === 1) {
+        setIsFavorite((prev) => !prev);
+      } else {
+        Alert.alert("Hata", response.data.mesaj || "Bir hata oluştu.");
       }
     } catch (error) {
       console.error("Error toggling favorite:", error);
+      Alert.alert("Hata", "Favori işlemi sırasında bir hata oluştu.");
     }
   };
 
@@ -84,6 +117,23 @@ const AdDetailsPage = ({ route }) => {
       contentOffsetX / event.nativeEvent.layoutMeasurement.width
     );
     setCurrentImageIndex(index);
+  };
+
+  const handleImagePress = (image, index) => {
+    setFullScreenImage(image);
+    setFullScreenIndex(index);
+  };
+
+  const handleFullScreenScroll = (event) => {
+    const contentOffsetX = event.nativeEvent.contentOffset.x;
+    const index = Math.floor(
+      contentOffsetX / event.nativeEvent.layoutMeasurement.width
+    );
+    setFullScreenIndex(index);
+  };
+
+  const closeFullScreen = () => {
+    setFullScreenImage(null);
   };
 
   if (loading) {
@@ -128,11 +178,16 @@ const AdDetailsPage = ({ route }) => {
           scrollEventThrottle={16}
         >
           {images.map((image, index) => (
-            <Image
+            <TouchableOpacity
               key={index}
-              source={{ uri: `https://roomiefies.com/app/${image}` }}
-              style={styles.image}
-            />
+              onPress={() => handleImagePress(image, index)}
+              activeOpacity={0.9} // Görsele tıklayınca hafif bir soluklaşma efekti ekledim.
+            >
+              <Image
+                source={{ uri: `https://roomiefies.com/app/${image}` }}
+                style={styles.image}
+              />
+            </TouchableOpacity>
           ))}
         </ScrollView>
         {images.length > 0 && (
@@ -171,7 +226,6 @@ const AdDetailsPage = ({ route }) => {
         </TouchableOpacity>
       </View>
 
-      {/* İçerik */}
       <View style={styles.detailsContainer}>
         {currentTab === "details" ? (
           <>
@@ -225,9 +279,9 @@ const AdDetailsPage = ({ route }) => {
                 Fiyat:{" "}
                 {data.rent
                   ? `${Number(data.rent).toLocaleString("tr-TR", {
-                    style: "currency",
-                    currency: "TRY",
-                  })}`
+                      style: "currency",
+                      currency: "TRY",
+                    })}`
                   : "Belirtilmemiş"}
               </Text>
             </View>
@@ -243,6 +297,44 @@ const AdDetailsPage = ({ route }) => {
           </>
         )}
       </View>
+
+      {/* Full Screen Image Modal */}
+      <Modal visible={fullScreenImage !== null} transparent={true}>
+        <View style={styles.fullScreenOverlay}>
+          <View style={styles.fullScreenContainer}>
+            <ScrollView
+              horizontal
+              pagingEnabled
+              showsHorizontalScrollIndicator={false}
+              onScroll={handleFullScreenScroll}
+              scrollEventThrottle={16}
+              contentOffset={{ x: fullScreenIndex * width, y: 0 }}
+            >
+              {images.map((image, index) => (
+                <Image
+                  key={index}
+                  source={{ uri: `https://roomiefies.com/app/${image}` }}
+                  style={styles.fullScreenImage}
+                  resizeMode="contain" // Tam ekran görseli daha iyi sığdırır
+                />
+              ))}
+            </ScrollView>
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={closeFullScreen}
+            >
+              <Text style={styles.closeButtonText}>X</Text>
+            </TouchableOpacity>
+             {images.length > 1 && (
+              <View style={styles.fullScreenImageCounter}>
+                <Text style={styles.fullScreenCounterText}>
+                  {fullScreenIndex + 1}/{images.length}
+                </Text>
+              </View>
+            )}
+          </View>
+        </View>
+      </Modal>
     </ScrollView>
   );
 };
@@ -313,7 +405,6 @@ const styles = StyleSheet.create({
   detailsContainer: {
     flexGrow: 1,
     padding: 15,
-
     marginBottom: 50,
   },
   description: {
@@ -352,6 +443,46 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 2,
     elevation: 5,
+  },
+  fullScreenOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.9)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  fullScreenContainer: {
+    width: width,
+    height: height,
+  },
+  fullScreenImage: {
+    width: width,
+    height: height,
+  },
+  closeButton: {
+    position: "absolute",
+    top: 40,
+    right: 20,
+    backgroundColor: "rgba(0, 0, 0, 0.6)",
+    borderRadius: 20,
+    padding: 10,
+  },
+  closeButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+    fullScreenImageCounter: {
+    position: "absolute",
+    bottom: 20,
+    left: 20,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 10,
+  },
+  fullScreenCounterText: {
+    color: "#fff",
+    fontSize: 14,
   },
 });
 
