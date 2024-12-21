@@ -1367,6 +1367,13 @@
   dependencies:
     merge-options "^3.0.4"
 
+"@react-native-community/datetimepicker@^8.2.0":
+  version "8.2.0"
+  resolved "https://registry.yarnpkg.com/@react-native-community/datetimepicker/-/datetimepicker-8.2.0.tgz#f62ac4fc12bd527fbbe93934e6c1cfbb7ba570f3"
+  integrity sha512-qrUPhiBvKGuG9Y+vOqsc56RPFcHa1SU2qbAMT0hfGkoFIj3FodE0VuPVrEa8fgy7kcD5NQmkZIKgHOBLV0+hWg==
+  dependencies:
+    invariant "^2.2.4"
+
 "@react-native-picker/picker@^2.10.1":
   version "2.10.1"
   resolved "https://registry.npmjs.org/@react-native-picker/picker/-/picker-2.10.1.tgz"
@@ -4930,10 +4937,10 @@ react-native-get-random-values@^1.11.0:
   dependencies:
     fast-base64-decode "^1.0.0"
 
-react-native-image-picker@^7.2.2:
-  version "7.2.2"
-  resolved "https://registry.yarnpkg.com/react-native-image-picker/-/react-native-image-picker-7.2.2.tgz#6f6e92458c29fa4857d4c8033f2266ab4f006a7e"
-  integrity sha512-hcSaD/ohDac1ooDbZyKltfmOEAWrQOrPbusKEfbJQ7EfGveBEIF5wfmZsCjXRc0HNpGdQ71P1x2JZckkqu7IRw==
+react-native-image-picker@^7.2.3:
+  version "7.2.3"
+  resolved "https://registry.yarnpkg.com/react-native-image-picker/-/react-native-image-picker-7.2.3.tgz#9c402591462af256cdd9aed796c28083a48f90cd"
+  integrity sha512-zKIZUlQNU3EtqizsXSH92zPeve4vpUrsqHu2kkpCxWE9TZhJFZBb+irDsBOY8J21k0+Edgt06TMQGJ+iPUIXyA==
 
 react-native-reanimated@^3.16.3:
   version "3.16.3"
