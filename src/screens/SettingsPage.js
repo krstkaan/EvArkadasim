@@ -170,12 +170,6 @@ const SettingsPage = ({ navigation }) => {
                 <Ionicons name="help-circle" size={24} color={styles.iconColor.color} />
                 <Text style={styles.sectionText}>Yardım</Text>
             </TouchableOpacity>
-
-            {/* Çıkış Yap */}
-            <Pressable style={styles.section} onPress={handleLogout}>
-                <Ionicons name="log-out" size={24} color={styles.iconColor.color} />
-                <Text style={styles.sectionText}>Çıkış Yap</Text>
-            </Pressable>
         </ScrollView>
     );
 };
