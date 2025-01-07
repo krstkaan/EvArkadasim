@@ -69,10 +69,13 @@ export default function LoginPage({ navigation }) {
                 const userID = response.data.userId;
                 console.log(response.data);
                 const token = response.data.token;
+                 const receivedEmail = email; //inputtan gelen email alınır
+                const birthdate = response.data.birthdate;
                 await AsyncStorage.setItem('token', token);
                 await AsyncStorage.setItem('displayname', displayname);
-                await AsyncStorage.setItem('email', email);
+                await AsyncStorage.setItem('email', receivedEmail); // inputtan alınan email kaydedilir
                 await AsyncStorage.setItem('userID', userID);
+                await AsyncStorage.setItem('birthdate', birthdate);
 
                 setEmail('');
                 setPassword('');

@@ -1,14 +1,16 @@
 import { StyleSheet, Text, View, ScrollView, Image, TouchableOpacity } from 'react-native';
-import React, { useState, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 
-const MyAdsPage = () => {
+const MyFavAdsPage = () => {
     const [userID, setuserID] = useState('');
-    const [myAds, setMyAds] = useState([]);
+    const [favAds, setFavAds] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+
     const navigation = useNavigation();
+
 
     const fetchUserID = async () => {
         try {
@@ -16,7 +18,7 @@ const MyAdsPage = () => {
             if (storedUserID) {
                 setuserID(storedUserID);
                 console.log('userID:', storedUserID);
-                fetchMyAds(storedUserID);
+                fetchFavAds(storedUserID);
             }
         } catch (error) {
             console.log('Error fetching userID:', error);
@@ -26,8 +28,9 @@ const MyAdsPage = () => {
     };
 
 
-    const fetchMyAds = async (userID) => {
-        if (!userID) return; // userId yoksa yükleme yapma
+    const fetchFavAds = async (userID) => {
+      if (!userID) return; // userId yoksa yükleme yapma
+
         setLoading(true);
         setError(null);
         try {
@@ -35,7 +38,7 @@ const MyAdsPage = () => {
             formData.append('userID', userID);
 
             const response = await fetch(
-                'https://roomiefies.com/app/getuserilan.php',
+                'https://roomiefies.com/app/getuserfavilan.php',
                 {
                     method: 'POST',
                     body: formData,
@@ -49,31 +52,31 @@ const MyAdsPage = () => {
             }
 
             const data = await response.json();
-             console.log("API'den gelen veri:", data);
+            console.log("API'den gelen veri:", data);
 
             if (data) {
-                setMyAds(data);
+                setFavAds(data);
             }
         } catch (error) {
-            console.error('Error fetching my ads:', error);
-            setError("İlanlarınız alınırken bir sorun oluştu.");
+            console.error('Error fetching favorite ads:', error);
+            setError("Favori ilanlar alınırken bir sorun oluştu.");
         } finally {
             setLoading(false);
         }
     };
-    useFocusEffect(
+
+
+   useFocusEffect(
         useCallback(() => {
-            fetchUserID();
+        fetchUserID();
         }, [])
     );
+
 
     const handleCardPress = (id) => {
         navigation.navigate('AdDetailsPage', { id });
     };
 
-    const handleEditPress = (id) => {
-        navigation.navigate('EditAdPage', { id });
-    };
 
     if (loading) {
         return <View style={styles.center}><Text>Yükleniyor...</Text></View>;
@@ -83,34 +86,33 @@ const MyAdsPage = () => {
         return <View style={styles.center}><Text>Hata: {error}</Text></View>;
     }
 
-
-    if (!myAds || myAds.length === 0) {
+    if (!favAds || favAds.length === 0) {
+        console.log("favAds Dizisi Boş:", favAds);
         return <View style={styles.center}>
-            <Text>Henüz ilanınız bulunmamaktadır.</Text>
+            <Text>Favori ilanınız bulunmamaktadır.</Text>
         </View>;
     }
+
 
     return (
         <View style={styles.container}>
             <ScrollView showsVerticalScrollIndicator={false}>
                 <View style={styles.adsContainer}>
-                    {myAds.map((ad, index) => (
-                        <View key={index} style={styles.adContainer}>
-                            <TouchableOpacity style={{ flex: 1 }} onPress={() => handleCardPress(ad.id)}>
-                                <Image
-                                    source={{ uri: `https://roomiefies.com/app/${ad.imageurl1}` }}
-                                    style={styles.adImage}
-                                    resizeMode="cover"
-                                />
-                                <Text style={styles.adTitle}>{ad.title}</Text>
-                                <View style={styles.priceAndEditContainer}>
-                                    <Text style={styles.adPrice}>{ad.rent} TL</Text>
-                                    <TouchableOpacity style={styles.editButton} onPress={() => handleEditPress(ad.id)}>
-                                        <Text style={styles.editButtonText}>İlanı Düzenle</Text>
-                                    </TouchableOpacity>
-                                </View>
-                            </TouchableOpacity>
-                        </View>
+                    {favAds.map((ad, index) => (
+                        <TouchableOpacity
+                            key={index}
+                            style={styles.adContainer}
+                            onPress={() => handleCardPress(ad.id)}
+                        >
+                            <Image
+                                source={{ uri: `https://roomiefies.com/app/${ad.imageurl1}` }}
+                                style={styles.adImage}
+                                resizeMode="cover"
+                            />
+                            <Text style={styles.adTitle}>{ad.title}</Text>
+                            <Text style={styles.adPrice}>{ad.rent} TL</Text>
+                            <Text style={styles.adUser}>İlan Sahibi: {ad.displayName}</Text>
+                        </TouchableOpacity>
                     ))}
                 </View>
             </ScrollView>
@@ -118,8 +120,7 @@ const MyAdsPage = () => {
     );
 };
 
-
-export default MyAdsPage;
+export default MyFavAdsPage;
 
 const styles = StyleSheet.create({
     container: {
@@ -159,27 +160,16 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         padding: 8,
     },
-   priceAndEditContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-         paddingHorizontal: 8,
-        paddingBottom: 8,
-    },
     adPrice: {
         fontSize: 14,
         color: 'green',
-         flex: 1,
-    },
-    editButton: {
         paddingHorizontal: 8,
-        paddingVertical: 4,
-         backgroundColor: '#e0e0e0',
-         borderRadius: 4,
     },
-    editButtonText:{
-         color: 'blue',
-         fontSize: 13,
+    adUser: {
+        fontSize: 12,
+        color: 'gray',
+        paddingHorizontal: 8,
+        paddingBottom: 8
     },
     endMessage: {
         textAlign: 'center',
