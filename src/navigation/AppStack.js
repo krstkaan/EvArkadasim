@@ -22,6 +22,7 @@ const AppStack = () => {
             <Stack.Screen name="AdDetailsPage" component={AdDetailsPage} options={{ headerShown: true, title: "Kaan" }} />
             <Stack.Screen name="SettingsPage" component={SettingsPage} options={{ headerShown: true, title: "Ayarlar" }} />
             <Stack.Screen name="ProfileEditPage" component={ProfileEditPage} options={{ headerShown: true, title: "Profil Düzenle" }} />
+
         </Stack.Navigator>
     );
 };

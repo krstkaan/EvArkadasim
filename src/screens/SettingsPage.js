@@ -143,10 +143,13 @@ const SettingsPage = ({ navigation }) => {
             </TouchableOpacity>
 
             {/* Sohbetler */}
-            <TouchableOpacity style={styles.section}>
+            <TouchableOpacity
+                style={styles.section}
+            >
                 <FontAwesome name="comments" size={24} color={styles.iconColor.color} />
                 <Text style={styles.sectionText}>Sohbetler</Text>
             </TouchableOpacity>
+
 
             {/* Abonelik ve Ödeme */}
             <TouchableOpacity style={styles.section}>
@@ -160,7 +163,11 @@ const SettingsPage = ({ navigation }) => {
                 <Text style={styles.sectionText}>Dil ve Bölge</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.section}>
+            {/* Tema Ayarları */}
+            <TouchableOpacity
+                style={styles.section}
+                onPress={() => navigation.navigate('TemaAyarlari')}
+            >
                 <Ionicons name="moon" size={24} color={styles.iconColor.color} />
                 <Text style={styles.sectionText}>Tema Ayarları</Text>
             </TouchableOpacity>
