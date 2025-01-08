@@ -336,6 +336,15 @@ const styles = StyleSheet.create({
   submitButton: {
     backgroundColor: '#28a745',
   },
+  profileHeader: {
+    width: '100%',
+    alignItems: 'center',
+    paddingVertical: 20,
+  },
+  profileName: {
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
 
 });
 

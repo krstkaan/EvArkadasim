@@ -26,6 +26,13 @@ const HomePage = () => {
   const fetchDisplayName = async () => {
     try {
       const name = await AsyncStorage.getItem('displayname');
+      const email = await AsyncStorage.getItem('email');
+      const userID = await AsyncStorage.getItem('userID');
+      const birthDate = await AsyncStorage.getItem('birthdate');
+      console.log('displayname:', name);
+      console.log('email:', email);
+      console.log('userID:', userID);
+      console.log('birthdate:', birthDate);
       if (name) {
         setDisplayName(name);
       }
