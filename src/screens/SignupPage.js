@@ -1,16 +1,14 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert, StyleSheet, ImageBackground } from 'react-native';
 import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage'; // Token kaydetmek için AsyncStorage
-//import { login } from '../redux/UserSlice';
-//import { useDispatch } from 'react-redux';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import styles from '../../assets/styles/style';
 
 const SignupPage = ({ navigation }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [displayName, setDisplayname] = useState('');
-    //const dispatch = useDispatch();
+    const [loading, setLoading] = useState(false);
 
     const handleSignup = async () => {
         if (!email || !password || !displayName) {
@@ -18,6 +16,7 @@ const SignupPage = ({ navigation }) => {
             return;
         }
 
+        setLoading(true);
         try {
             let formData = new FormData();
             formData.append('email', email);
@@ -32,26 +31,36 @@ const SignupPage = ({ navigation }) => {
 
             if (response.data.sonuc === '0') {
                 Alert.alert('Hata', response.data.mesaj, [{ text: 'Tamam' }]);
-            } else if(response.data.sonuc === '1') {
-                // Başarılı ise token'ı al ve kaydet
-                console.log(response.data);
-                const token = response.data.token;
-
-                await AsyncStorage.setItem('token', token);
-                await AsyncStorage.setItem('email', email);
-                await AsyncStorage.setItem('displayName', response.data.displayname);
-
+            } else if (response.data.sonuc === '1') {
+                // Token'ı kaydetmiyoruz ve diğer bilgileri de kaydetmiyoruz
+                // çünkü kullanıcı henüz onaylanmadı
+                
                 setEmail('');
                 setPassword('');
                 setDisplayname('');
-                //dispatch(login(token));
-            }else{
-            console.log("else ici:" + response.data);
+            
+                Alert.alert(
+                    "Başarılı",
+                    "Kayıt isteğiniz onaya gönderildi.",
+                    [{
+                        text: "Tamam",
+                        onPress: () => {
+                            navigation.reset({
+                                index: 0,
+                                routes: [{ name: 'LoginPage' }],
+                            });
+                        }
+                    }]
+                );
+            } else {
+                console.log("else ici:" + response.data);
+                Alert.alert('Hata', 'Kayıt işlemi başarısız oldu.', [{ text: 'Tamam' }]);
             }
-
         } catch (error) {
             console.log(error);
             Alert.alert('Hata', 'Bir hata oluştu. Lütfen tekrar deneyin.', [{ text: 'Tamam' }]);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -68,6 +77,7 @@ const SignupPage = ({ navigation }) => {
                     placeholder="John Doe"
                     placeholderTextColor="#888"
                     style={styles.inputlogin}
+                    editable={!loading}
                 />
                 <Text style={styles.label}>Email</Text>
                 <TextInput
@@ -77,6 +87,7 @@ const SignupPage = ({ navigation }) => {
                     keyboardType="email-address"
                     placeholderTextColor="#888"
                     style={styles.inputlogin}
+                    editable={!loading}
                 />
                 <Text style={styles.label}>Şifre</Text>
                 <TextInput
@@ -86,15 +97,19 @@ const SignupPage = ({ navigation }) => {
                     secureTextEntry
                     placeholderTextColor="#888"
                     style={styles.inputlogin}
+                    editable={!loading}
                 />
-                <TouchableOpacity style={styles.buttonlogin} onPress={handleSignup}>
-                    <Text style={styles.buttonText}>Kayıt Ol</Text>
+                <TouchableOpacity
+                    style={[styles.buttonlogin, loading && { opacity: 0.6 }]}
+                    onPress={handleSignup}
+                    disabled={loading}
+                >
+                    <Text style={styles.buttonText}>{loading ? 'Kaydediliyor...' : 'Kayıt Ol'}</Text>
                 </TouchableOpacity>
 
-                {/* Zaten üye misin? Giriş yap butonu */}
                 <TouchableOpacity
                     style={styles.loginButton}
-                    onPress={() => navigation.navigate('LoginPage')} // LoginPage.js'e yönlendirme
+                    onPress={() => navigation.navigate('LoginPage')}
                 >
                     <Text style={styles.forwardText}>Zaten üye misin? Giriş yap!</Text>
                 </TouchableOpacity>

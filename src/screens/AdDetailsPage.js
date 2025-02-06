@@ -257,7 +257,7 @@ const AdDetailsPage = ({ route }) => {
                   }}
                 >
                   <Text style={styles.label}>
-                    İlan Tarihi: {data.date || "Belirtilmemiş"}
+                    İlan Tarihi: {data.created_at || "Belirtilmemiş"}
                   </Text>
                   <Text style={styles.label}>
                     İlan No: {data.id || "Belirtilmemiş"}
